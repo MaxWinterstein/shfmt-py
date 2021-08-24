@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
 import hashlib
 import http
-import io
 import os.path
 import stat
 import sys
-import tarfile
 import urllib.request
-import zipfile
 from distutils.command.build import build as orig_build
 from distutils.core import Command
 from typing import Tuple
@@ -19,7 +16,7 @@ SHFMT_VERSION = 'v3.3.1'
 POSTFIX_SHA256 = {
     # TODO(rhee): detect "linux.aarch64" and "linux.armv6hf"
     'linux': (
-        'linux.x86_64.tar.xz',
+        'linux_amd64',
         '0f73bf27219571bca7c5ef7d740d6ae72227e3995ffd88c7cb2b5712751538e2',
     ),
     'darwin': (
@@ -31,7 +28,7 @@ POSTFIX_SHA256 = {
         'aa116e5437a7e03c137bea0331177a91f98735094ef0ca2ffcfd6be2a3d61765',
     ),
 }
-PY_VERSION = '2'
+PY_VERSION = '3'
 
 
 def get_download_url() -> Tuple[str, str]:
@@ -42,6 +39,7 @@ def get_download_url() -> Tuple[str, str]:
     )
     print(url)
     return url, sha256
+
 
 def download(url: str, sha256: str) -> bytes:
     with urllib.request.urlopen(url) as resp:
