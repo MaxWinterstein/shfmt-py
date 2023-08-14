@@ -5,10 +5,10 @@ import os.path
 import stat
 import sys
 import urllib.request
-from distutils.command.build import build as orig_build
-from distutils.core import Command
 from typing import Tuple
 
+from distutils.command.build import build as orig_build
+from distutils.core import Command
 from setuptools import setup
 from setuptools.command.install import install as orig_install
 
