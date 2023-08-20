@@ -1,38 +1,57 @@
 #!/usr/bin/env python3
+from __future__ import annotations
+
 import hashlib
 import http
 import os.path
+import platform
 import stat
 import sys
 import urllib.request
-from typing import Tuple
 
 from distutils.command.build import build as orig_build
 from distutils.core import Command
 from setuptools import setup
 from setuptools.command.install import install as orig_install
 
-SHFMT_VERSION = '3.4.3'
+SHFMT_VERSION = '3.7.0'
 POSTFIX_SHA256 = {
-    # TODO(rhee): detect "linux.aarch64" and "linux.armv6hf"
-    'linux': (
+    ('linux', 'armv6hf'): (
+        'linux_arm',
+        '3d1f5a1aede8161293bc42007af5b983f16d62857736c789f062346ed839f299',
+    ),
+    ('linux', 'aarch64'): (
+        'linux_arm64',
+        '111612560d15bd53d8e8f8f85731176ce12f3b418ec473d39a40ed6bbec772de',
+    ),
+    ('linux', 'x86_64'): (
         'linux_amd64',
-        '713ef49db9a60a00636814a507da851b58da6b4b98a3627188fba0a61b60f9a8',
+        '0264c424278b18e22453fe523ec01a19805ce3b8ebf18eaf3aadc1edc23f42e3',
     ),
-    'darwin': (
+    ('darwin', 'x86_64'): (
         'darwin_amd64',
-        '22af685075e0448861c5db111e70cc399bdc95cdd7def943bc5adb6783f3e530',
+        'ae1d1ab961c113fb3dc2ff1150f33c3548983550d91da889b3171a5bcfaab14f',
     ),
-    'win32': (
+    ('darwin', 'arm64'): (
+        'darwin_arm64',
+        'ad7ff6f666adba3d801eb17365a15539f07296718d39fb62cc2fde6b527178aa',
+    ),
+    ('win32', 'AMD64'): (
         'windows_amd64.exe',
-        'a6c317a68dddf8efa9fd87d985a807cf7ab2423871d390aac4d3775691565835',
+        '2807b4af91fbbd961b68716de06c044f1b4f897457fc89fba216e5e2e351c64f',
+    ),
+    ('win32', 'x86'): (
+        'windows_386.exe',
+        '8bd0422554dd6ce5e07d9d17d020d89254b5c056009005df824e39a8cbdcf6aa',
     ),
 }
+POSTFIX_SHA256[('cygwin', 'x86_64')] = POSTFIX_SHA256[('win32', 'AMD64')]
+POSTFIX_SHA256[('linux', 'armv7l')] = POSTFIX_SHA256[('linux', 'armv6hf')]
 PY_VERSION = '1'
 
 
-def get_download_url() -> Tuple[str, str]:
-    postfix, sha256 = POSTFIX_SHA256[sys.platform]
+def get_download_url() -> tuple[str, str]:
+    postfix, sha256 = POSTFIX_SHA256[(sys.platform, platform.machine())]
     url = (
         f'https://github.com/mvdan/sh/releases/download/'
         f'v{SHFMT_VERSION}/shfmt_v{SHFMT_VERSION}_{postfix}'
@@ -58,7 +77,7 @@ def download(url: str, sha256: str) -> bytes:
 def save_executable(data: bytes, base_dir: str):
     exe = 'shfmt' if sys.platform != 'win32' else 'shfmt.exe'
     output_path = os.path.join(base_dir, exe)
-    os.makedirs(base_dir)
+    os.makedirs(base_dir, exist_ok=True)
 
     with open(output_path, 'wb') as fp:
         fp.write(data)
