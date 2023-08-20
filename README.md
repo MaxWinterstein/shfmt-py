@@ -37,8 +37,11 @@ Sample `.pre-commit-config.yaml`:
 
 ## FAQ
 
-Q: I get something like `SSL: CERTIFICATE_VERIFY_FAILED` on macOS
-A: Install certificates with e.g.: `"/Applications/Python 3.9/Install Certificates.command"`. See [here][here1] or [here][here2] for
+Q: It won't get updated via e.g. `Renovate Bot`  
+A: See https://github.com/shfmt-py/update-via-renovate .
+
+Q: I get something like `SSL: CERTIFICATE_VERIFY_FAILED` on macOS  
+A: Install certificates with e.g.: `"/Applications/Python 3.9/Install Certificates.command"`. See [here][here1] or [here][here2] for a solution.
 
 [shfmt]: https://github.com/mvdan/sh
 [pre-commit]: https://pre-commit.com
