@@ -8,9 +8,11 @@ import platform
 import stat
 import sys
 import urllib.request
-
 from distutils.command.build import build as orig_build
 from distutils.core import Command
+from logging import INFO, WARNING
+from shutil import copy2
+
 from setuptools import setup
 from setuptools.command.install import install as orig_install
 
@@ -89,6 +91,18 @@ def save_executable(data: bytes, base_dir: str):
     os.chmod(output_path, mode)
 
 
+def which(exe: str) -> str | None:
+    try:
+        path = os.environ['PATH'].split(os.pathsep)
+    except KeyError:
+        raise ValueError("couldn't get PATH environment variable")
+
+    for full in path:
+        full = os.path.join(full, 'shfmt')
+        if os.path.isfile(full) and os.access(full, os.X_OK):
+            return os.path.abspath(full)
+
+
 class build(orig_build):
     sub_commands = orig_build.sub_commands + [('fetch_binaries', None)]
 
@@ -108,9 +122,26 @@ class fetch_binaries(Command):
 
     def run(self):
         # save binary to self.build_temp
-        url, sha256 = get_download_url()
-        data = download(url, sha256)
-        save_executable(data, self.build_temp)
+
+        try:
+            url, sha256 = get_download_url()
+
+        except KeyError as e:
+            self.announce(
+                f'unsupported platform {sys.platform}:{platform.machine()}; '
+                f'we can try to search for the binary in PATH', level=WARNING)
+            path = which('shfmt')
+
+            if not path:
+                self.announce('no shfmt binary found in PATH', level=WARNING)
+                raise e
+
+            os.makedirs(self.build_temp, exist_ok=True)
+            copy2(path, self.build_temp)
+            self.announce(f'copied {path=} -> {self.build_temp}', level=INFO)
+
+        else:
+            save_executable(data, self.build_temp)
 
 
 class install_shfmt(Command):
