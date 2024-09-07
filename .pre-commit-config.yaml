@@ -1,37 +1,44 @@
+---
+default_language_version:
+  python: python3.8
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:
-    -   id: trailing-whitespace
-    -   id: end-of-file-fixer
-    -   id: check-yaml
-    -   id: debug-statements
-    -   id: double-quote-string-fixer
-    -   id: name-tests-test
-    -   id: requirements-txt-fixer
--   repo: https://github.com/asottile/setup-cfg-fmt
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: debug-statements
+      - id: double-quote-string-fixer
+      - id: name-tests-test
+      - id: requirements-txt-fixer
+  - repo: https://github.com/asottile/setup-cfg-fmt
     rev: v2.5.0
     hooks:
-    -   id: setup-cfg-fmt
--   repo: https://github.com/asottile/reorder-python-imports
+      - id: setup-cfg-fmt
+  - repo: https://github.com/asottile/reorder-python-imports
     rev: v3.13.0
     hooks:
-    -   id: reorder-python-imports
-        args: [--py38-plus, --add-import, 'from __future__ import annotations']
--   repo: https://github.com/asottile/add-trailing-comma
+      - id: reorder-python-imports
+        args: [--py38-plus, --add-import, from __future__ import annotations]
+  - repo: https://github.com/asottile/add-trailing-comma
     rev: v3.1.0
     hooks:
-    -   id: add-trailing-comma
--   repo: https://github.com/asottile/pyupgrade
+      - id: add-trailing-comma
+  - repo: https://github.com/asottile/pyupgrade
     rev: 32151ac97cbfd7f9dcd22e49516fb32266db45b4  # 3.16 it's last version for 3.8
     hooks:
-    -   id: pyupgrade
+      - id: pyupgrade
         args: [--py38-plus]
--   repo: https://github.com/pre-commit/mirrors-autopep8
+  - repo: https://github.com/pre-commit/mirrors-autopep8
     rev: v2.0.4
     hooks:
-    -   id: autopep8
--   repo: https://github.com/PyCQA/flake8
+      - id: autopep8
+  - repo: https://github.com/PyCQA/flake8
     rev: 7.1.1
     hooks:
-    -   id: flake8
+      - id: flake8
+  - repo: https://github.com/lyz-code/yamlfix
+    rev: 1.17.0
+    hooks:
+      - id: yamlfix
