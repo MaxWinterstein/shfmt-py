@@ -23,7 +23,7 @@ repos:
     hooks:
     -   id: add-trailing-comma
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v3.17.0  # 3.16 it's last version for 3.8
+    rev: 32151ac97cbfd7f9dcd22e49516fb32266db45b4  # 3.16 it's last version for 3.8
     hooks:
     -   id: pyupgrade
         args: [--py38-plus]
