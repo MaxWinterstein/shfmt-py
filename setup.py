@@ -143,6 +143,7 @@ class fetch_binaries(Command):
             self.announce(f'copied {path=} -> {self.build_temp}', level=INFO)
 
         else:
+            data = download(url, sha256)
             save_executable(data, self.build_temp)
 
 
