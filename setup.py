@@ -8,11 +8,12 @@ import platform
 import stat
 import sys
 import urllib.request
-from distutils.command.build import build as orig_build
-from distutils.core import Command
-from logging import INFO, WARNING
+from logging import INFO
+from logging import WARNING
 from shutil import copy2
 
+from distutils.command.build import build as orig_build
+from distutils.core import Command
 from setuptools import setup
 from setuptools.command.install import install as orig_install
 
@@ -129,7 +130,8 @@ class fetch_binaries(Command):
         except KeyError as e:
             self.announce(
                 f'unsupported platform {sys.platform}:{platform.machine()}; '
-                f'we can try to search for the binary in PATH', level=WARNING)
+                f'we can try to search for the binary in PATH', level=WARNING,
+            )
             path = which('shfmt')
 
             if not path:
