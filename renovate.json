@@ -12,7 +12,7 @@
       "matchStrings": [
         "SHFMT_VERSION = '(?<currentValue>[^']+)'"
       ],
-      "depNameTemplate": "mvdan/shfmt",
+      "depNameTemplate": "mvdan/sh",
       "datasourceTemplate": "github-releases"
     }
   ]
