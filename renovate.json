@@ -2,5 +2,13 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended"
+  ],
+  "regexManagers": [
+    {
+      "fileMatch": ["\\.py$"],
+      "matchStrings": ["SHFMT_VERSION = '(?<currentValue>[^']+)'"],
+      "depNameTemplate": "mvdan/shfmt",
+      "datasourceTemplate": "github-releases"
+    }
   ]
 }
