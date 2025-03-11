@@ -3,10 +3,15 @@
   "extends": [
     "config:recommended"
   ],
-  "regexManagers": [
+  "customManagers": [
     {
-      "fileMatch": ["\\.py$"],
-      "matchStrings": ["SHFMT_VERSION = '(?<currentValue>[^']+)'"],
+      "customType": "regex",
+      "fileMatch": [
+        "\\.py$"
+      ],
+      "matchStrings": [
+        "SHFMT_VERSION = '(?<currentValue>[^']+)'"
+      ],
       "depNameTemplate": "mvdan/shfmt",
       "datasourceTemplate": "github-releases"
     }
