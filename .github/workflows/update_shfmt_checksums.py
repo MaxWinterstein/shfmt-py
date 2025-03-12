@@ -79,7 +79,7 @@ updated = False
 # Directly update variables in setup.py with the new checksums
 for var_name, sha in checksums.items():
     print(f"[DEBUG] var_name: {var_name}")
-    pattern = fr"({var_name}\s*=\s*)\"[a-fA-F0-9]{{64}}\""
+    pattern = fr"({var_name}\s*=\s*)\'[a-fA-F0-9]{{64}}\'"
     replacement = fr'\1"{sha}"'  # Corrected line
 
     # Debug: print the pattern we are searching for
