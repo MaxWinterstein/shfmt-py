@@ -1,0 +1,42 @@
+name: Update shfmt checksums
+
+on:
+  push:
+    branches:
+      - renovate/mvdan-sh**  # Only run when Renovate updates SHFMT_VERSION
+
+jobs:
+  update-checksums:
+    runs-on: ubuntu-latest
+
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
+
+      - name: Get last commit message
+        id: get_commit_message
+        run: echo "commit_message=$(git log -1 --pretty=%B)" >> $GITHUB_ENV
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run checksum update script
+        run: python .github/workflows/update_shfmt_checksums.py
+
+      - name: Run README update script
+        run: python .github/workflows/update_readme.py
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        if: ${{ env.commit_message != 'Apply automatic changes' }}
