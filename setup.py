@@ -14,13 +14,13 @@ from distutils.core import Command
 from setuptools import setup
 from setuptools.command.install import install as orig_install
 
-linux_arm = '3d1f5a1aede8161293bc42007af5b983f16d62857736c789f062346ed839f299'
-linux_arm64 = '111612560d15bd53d8e8f8f85731176ce12f3b418ec473d39a40ed6bbec772de'
-linux_amd64 = '0264c424278b18e22453fe523ec01a19805ce3b8ebf18eaf3aadc1edc23f42e3'
-darwin_amd64 = 'ae1d1ab961c113fb3dc2ff1150f33c3548983550d91da889b3171a5bcfaab14f'
-darwin_arm64 = 'ad7ff6f666adba3d801eb17365a15539f07296718d39fb62cc2fde6b527178aa'
-windows_amd64_exe = '2807b4af91fbbd961b68716de06c044f1b4f897457fc89fba216e5e2e351c64f'
-windows_386_exe = '8bd0422554dd6ce5e07d9d17d020d89254b5c056009005df824e39a8cbdcf6aa'
+linux_arm = '00a243112f22a94594a82cb9399b086cf51441e3d9fef98b1203d633863506ed'
+linux_arm64 = 'b3976121710fd4b12bf641b0a7fb2686da598fb0da9f148c641b61b54cfa3407'
+linux_amd64 = '1904ec6bac715c1d05cd7f6612eec8f67a625c3749cb327e5bfb4127d09035ff'
+darwin_amd64 = '810a76cb7c78351e021c8025f344b12149d8426ce51609a179af68109ed5698e'
+darwin_arm64 = 'af206d234dff5d05d9ac355529b2b33a7a78e13fab9b59db777746aab3e72530'
+windows_amd64_exe = 'd11a0880588304496065110cb67ce2375cfcd5433e76dec505ce1fa21adf47cc'
+windows_386_exe = 'facfb70de36cc3b15d59938fd840d6eaa8dc5446767f043265038a49eb719ec7'
 
 SHFMT_VERSION = '3.11.0'
 POSTFIX_SHA256 = {
