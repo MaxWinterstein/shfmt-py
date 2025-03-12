@@ -30,7 +30,7 @@ def update_readme_version():
         SHFMT_VERSION = extract_version_from_setup()
 
         # Append '.0' to the version (if not already appended)
-        adjusted_version = f"{SHFMT_VERSION}.0"
+        adjusted_version = f"{SHFMT_VERSION}.1"
         print(f"[DEBUG] Adjusted version: {adjusted_version}")  # Debug log for adjusted version
 
         # Open and read the README.md file
