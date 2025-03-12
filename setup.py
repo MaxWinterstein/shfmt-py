@@ -14,35 +14,43 @@ from distutils.core import Command
 from setuptools import setup
 from setuptools.command.install import install as orig_install
 
+linux_arm = "3d1f5a1aede8161293bc42007af5b983f16d62857736c789f062346ed839f299"
+linux_arm64 = "111612560d15bd53d8e8f8f85731176ce12f3b418ec473d39a40ed6bbec772de"
+linux_amd64 = "0264c424278b18e22453fe523ec01a19805ce3b8ebf18eaf3aadc1edc23f42e3"
+darwin_amd64 = "ae1d1ab961c113fb3dc2ff1150f33c3548983550d91da889b3171a5bcfaab14f"
+darwin_arm64 = "ad7ff6f666adba3d801eb17365a15539f07296718d39fb62cc2fde6b527178aa"
+windows_amd64_exe = "2807b4af91fbbd961b68716de06c044f1b4f897457fc89fba216e5e2e351c64f"
+windows_386_exe = "8bd0422554dd6ce5e07d9d17d020d89254b5c056009005df824e39a8cbdcf6aa"
+
 SHFMT_VERSION = '3.7.0'
 POSTFIX_SHA256 = {
     ('linux', 'armv6hf'): (
         'linux_arm',
-        '3d1f5a1aede8161293bc42007af5b983f16d62857736c789f062346ed839f299',
+        linux_arm,
     ),
     ('linux', 'aarch64'): (
         'linux_arm64',
-        '111612560d15bd53d8e8f8f85731176ce12f3b418ec473d39a40ed6bbec772de',
+        linux_arm64,
     ),
     ('linux', 'x86_64'): (
         'linux_amd64',
-        '0264c424278b18e22453fe523ec01a19805ce3b8ebf18eaf3aadc1edc23f42e3',
+        linux_amd64,
     ),
     ('darwin', 'x86_64'): (
         'darwin_amd64',
-        'ae1d1ab961c113fb3dc2ff1150f33c3548983550d91da889b3171a5bcfaab14f',
+        darwin_amd64,
     ),
     ('darwin', 'arm64'): (
         'darwin_arm64',
-        'ad7ff6f666adba3d801eb17365a15539f07296718d39fb62cc2fde6b527178aa',
+        darwin_arm64,
     ),
     ('win32', 'AMD64'): (
         'windows_amd64.exe',
-        '2807b4af91fbbd961b68716de06c044f1b4f897457fc89fba216e5e2e351c64f',
+        windows_amd64_exe,
     ),
     ('win32', 'x86'): (
         'windows_386.exe',
-        '8bd0422554dd6ce5e07d9d17d020d89254b5c056009005df824e39a8cbdcf6aa',
+        windows_386_exe,
     ),
 }
 POSTFIX_SHA256[('cygwin', 'x86_64')] = POSTFIX_SHA256[('win32', 'AMD64')]
