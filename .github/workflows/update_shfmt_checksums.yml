@@ -38,5 +38,5 @@ jobs:
       - name: Run README update script
         run: python .github/workflows/update_readme.py
 
-      - uses: stefanzweifel/git-auto-commit-action@v5
+      - uses: stefanzweifel/git-auto-commit-action@v6
         if: ${{ env.commit_message != 'Apply automatic changes' }}
