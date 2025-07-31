@@ -13,6 +13,7 @@ repos:
     rev: v2.8.0
     hooks:
     -   id: setup-cfg-fmt
+        args: [--min-py-version, '3.8']
 -   repo: https://github.com/asottile/reorder-python-imports
     rev: v3.15.0
     hooks:
