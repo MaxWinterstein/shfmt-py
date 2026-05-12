@@ -6,8 +6,8 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": [
-        "\\.py$"
+      "managerFilePatterns": [
+        "/\\.py$/"
       ],
       "matchStrings": [
         "SHFMT_VERSION = '(?<currentValue>[^']+)'"
