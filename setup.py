@@ -9,8 +9,7 @@ import stat
 import sys
 import urllib.request
 
-from setuptools import Command
-from setuptools import setup
+from setuptools import Command, setup
 from setuptools.command.build import build as orig_build
 from setuptools.command.install import install as orig_install
 
@@ -62,10 +61,7 @@ POSTFIX_SHA256[('linux', 'armv7l')] = POSTFIX_SHA256[('linux', 'armv6hf')]
 
 def get_download_url() -> tuple[str, str]:
     postfix, sha256 = POSTFIX_SHA256[(sys.platform, platform.machine())]
-    url = (
-        f'https://github.com/mvdan/sh/releases/download/'
-        f'v{SHFMT_VERSION}/shfmt_v{SHFMT_VERSION}_{postfix}'
-    )
+    url = f'https://github.com/mvdan/sh/releases/download/v{SHFMT_VERSION}/shfmt_v{SHFMT_VERSION}_{postfix}'
     print(url)
     return url, sha256
 
@@ -135,7 +131,8 @@ class install_shfmt(Command):
         # this initializes attributes based on other commands' attributes
         self.set_undefined_options('build', ('build_temp', 'build_dir'))
         self.set_undefined_options(
-            'install', ('install_scripts', 'install_dir'),
+            'install',
+            ('install_scripts', 'install_dir'),
         )
 
     def run(self):
@@ -158,6 +155,7 @@ try:
 except ImportError:
     pass
 else:
+
     class bdist_wheel(orig_bdist_wheel):
         def finalize_options(self):
             orig_bdist_wheel.finalize_options(self)

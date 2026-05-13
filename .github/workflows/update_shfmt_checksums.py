@@ -37,10 +37,10 @@ if not match:
     sys.exit(1)
 
 shfmt_version = match.group(1)
-print(f"[INFO] Found SHFMT_VERSION: {shfmt_version}")
+print(f'[INFO] Found SHFMT_VERSION: {shfmt_version}')
 
 api_url = GITHUB_API_URL.format(version=shfmt_version)
-print(f"[INFO] Fetching release metadata from: {api_url}")
+print(f'[INFO] Fetching release metadata from: {api_url}')
 
 # Step 2: Fetch release metadata from GitHub
 # Use GITHUB_TOKEN if available to avoid the 60 req/hr unauthenticated limit;
@@ -51,11 +51,11 @@ if token:
     headers['Authorization'] = f'Bearer {token}'
 response = requests.get(api_url, headers=headers, timeout=30)
 if response.status_code != 200:
-    print(f"[ERROR] Failed to fetch release metadata (HTTP {response.status_code})")
+    print(f'[ERROR] Failed to fetch release metadata (HTTP {response.status_code})')
     sys.exit(1)
 
 assets = response.json().get('assets', [])
-print(f"[INFO] Got {len(assets)} release assets. Processing...")
+print(f'[INFO] Got {len(assets)} release assets. Processing...')
 
 checksums = {}
 for asset in assets:
@@ -63,17 +63,17 @@ for asset in assets:
     expected_key = name.replace(shfmt_version, '{version}')
 
     if expected_key not in ARCH_MAP:
-        print(f"[DEBUG] Skipping unrecognized asset: {name}")
+        print(f'[DEBUG] Skipping unrecognized asset: {name}')
         continue
 
     digest = asset.get('digest', '')
     if not re.fullmatch(r'sha256:[a-fA-F0-9]{64}', digest):
-        print(f"[WARNING] Asset {name} has no valid sha256 digest (got: {digest!r})")
+        print(f'[WARNING] Asset {name} has no valid sha256 digest (got: {digest!r})')
         continue
 
     var_name = ARCH_MAP[expected_key].format(version=shfmt_version)
     checksums[var_name] = digest.split(':', 1)[1].lower()
-    print(f"[INFO] Found checksum: {var_name} -> {checksums[var_name]}")
+    print(f'[INFO] Found checksum: {var_name} -> {checksums[var_name]}')
 
 if not checksums:
     print('[ERROR] No checksums extracted! The release format may have changed again.')
@@ -84,7 +84,7 @@ if not checksums:
 expected = set(ARCH_MAP.values())
 missing = expected - set(checksums)
 if missing:
-    print(f"[ERROR] Missing checksums for expected platforms: {sorted(missing)}")
+    print(f'[ERROR] Missing checksums for expected platforms: {sorted(missing)}')
     sys.exit(1)
 
 
@@ -96,19 +96,19 @@ updated = False
 
 # Directly update variables in setup.py with the new checksums
 for var_name, sha in checksums.items():
-    print(f"[DEBUG] var_name: {var_name}")
-    pattern = fr"({var_name}\s*=\s*)\'[a-fA-F0-9]{{64}}\'"
-    replacement = fr"\1'{sha}'"  # Corrected line
+    print(f'[DEBUG] var_name: {var_name}')
+    pattern = rf'({var_name}\s*=\s*)\'[a-fA-F0-9]{{64}}\''
+    replacement = rf"\1'{sha}'"  # Corrected line
 
     # Debug: print the pattern we are searching for
-    print(f"[DEBUG] Searching for pattern: {pattern}")
+    print(f'[DEBUG] Searching for pattern: {pattern}')
 
     if re.search(pattern, new_content):
         new_content = re.sub(pattern, replacement, new_content)
-        print(f"[INFO] Updated checksum for {var_name}: {sha}")
+        print(f'[INFO] Updated checksum for {var_name}: {sha}')
         updated = True
     else:
-        print(f"[WARNING] Could not find pattern for {var_name}. Check your setup.py format.")
+        print(f'[WARNING] Could not find pattern for {var_name}. Check your setup.py format.')
 
 if not updated:
     print('[WARNING] No checksums were updated. Maybe they are already correct?')

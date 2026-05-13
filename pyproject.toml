@@ -31,3 +31,23 @@ local_scheme = "no-local-version"
 # No Python modules to package — this distribution ships only the shfmt
 # binary, installed via the custom commands in setup.py.
 py-modules = []
+
+[tool.ruff]
+target-version = "py39"
+line-length = 120
+
+[tool.ruff.lint]
+# E/F = pycodestyle errors + pyflakes (flake8 baseline)
+# I    = import sorting (replaces reorder-python-imports)
+# UP   = pyupgrade
+# COM  = trailing commas (replaces add-trailing-comma)
+select = ["E", "F", "I", "UP", "COM"]
+extend-ignore = [
+    "E265",   # block comment should start with "# "
+    "E501",   # line too long (line-length is 120; rule disabled defensively)
+    "COM812", # ruff format handles trailing commas; rule would conflict
+]
+
+[tool.ruff.format]
+# Match existing codebase convention; avoids a noisy reformat.
+quote-style = "single"
