@@ -21,7 +21,10 @@ classifiers = [
 dynamic = ["version"]
 
 [project.optional-dependencies]
-test = ["pytest>=7"]
+# setuptools is a build-time dep but not a runtime dep, so it isn't in the
+# venv after `pip install`. Tests load setup.py (which imports setuptools)
+# via importlib, so they need it explicitly.
+test = ["pytest>=7", "setuptools"]
 
 [project.urls]
 Homepage = "https://github.com/maxwinterstein/shfmt-py"
