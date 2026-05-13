@@ -1,13 +1,16 @@
+[![PyPI version](https://img.shields.io/pypi/v/shfmt-py.svg)](https://pypi.org/project/shfmt-py)
+[![Supported Python versions](https://img.shields.io/pypi/pyversions/shfmt-py.svg)](https://pypi.org/project/shfmt-py)
+[![Downloads](https://img.shields.io/pypi/dm/shfmt-py.svg)](https://pypi.org/project/shfmt-py)
+[![License](https://img.shields.io/github/license/MaxWinterstein/shfmt-py.svg)](https://github.com/MaxWinterstein/shfmt-py/blob/master/LICENSE)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/MaxWinterstein/shfmt-py/master.svg)](https://results.pre-commit.ci/latest/github/MaxWinterstein/shfmt-py/master)
 
 # shfmt-py
 
-A python wrapper to provide a pip-installable [shfmt] binary.
+Python-installable wrapper for [shfmt], the shell script formatter.
 
-Internally this package provides a convenient way to download the pre-built
-shellcheck binary for your particular platform.
+Internally this package downloads the pre-built `shfmt` binary for your platform at install time.
 
-This package is totally cloned from [shellcheck-py] and modified to provide `shfmt` instead.
+Modeled after [shellcheck-py], adapted for `shfmt`.
 
 ## Installation
 
@@ -19,12 +22,11 @@ pip install shfmt-py
 
 ### CLI
 
-After installation, the `shfmt` binary should be available in your
-environment (or `shfmt.exe` on windows).
+After installation, the `shfmt` binary is available on your `PATH` (or `shfmt.exe` on Windows).
 
 ### As pre-commit hook
 
-See [pre-commit] for instructions
+See [pre-commit] for instructions.
 
 Sample `.pre-commit-config.yaml`:
 
