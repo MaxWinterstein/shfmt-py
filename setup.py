@@ -97,6 +97,30 @@ def save_executable(data: bytes, base_dir: str):
     os.chmod(output_path, mode)
 
 
+logger = logging.getLogger(__name__)
+
+
+def fall_back_to_path_shfmt(build_temp: str) -> None:
+    """Copy a system-installed shfmt into build_temp.
+
+    Used when the current platform has no pre-built binary in
+    POSTFIX_SHA256 (e.g. FreeBSD). Raises RuntimeError if no
+    shfmt is found on PATH either.
+    """
+    plat = f"{sys.platform}:{platform.machine()}"
+    logger.warning("No pre-built shfmt for %s; looking for one on PATH", plat)
+    system_shfmt = shutil.which("shfmt")
+    if system_shfmt is None:
+        raise RuntimeError(
+            f"No pre-built shfmt for {plat} and no `shfmt` found on PATH. "
+            f"Install shfmt manually (e.g. via your OS package manager) and retry.",
+        )
+    exe_name = "shfmt.exe" if sys.platform == "win32" else "shfmt"
+    os.makedirs(build_temp, exist_ok=True)
+    shutil.copy2(system_shfmt, os.path.join(build_temp, exe_name))
+    logger.info("Using %s as shfmt source for this build", system_shfmt)
+
+
 class build(orig_build):
     sub_commands = orig_build.sub_commands + [("fetch_binaries", None)]
 
@@ -121,30 +145,10 @@ class fetch_binaries(Command):
         try:
             url, sha256 = get_download_url()
         except KeyError:
-            self._fall_back_to_path_shfmt()
+            fall_back_to_path_shfmt(self.build_temp)
             return
         data = download(url, sha256)
         save_executable(data, self.build_temp)
-
-    def _fall_back_to_path_shfmt(self):
-        plat = f"{sys.platform}:{platform.machine()}"
-        self.announce(
-            f"No pre-built shfmt for {plat}; looking for one on PATH",
-            level=logging.WARNING,
-        )
-        system_shfmt = shutil.which("shfmt")
-        if system_shfmt is None:
-            raise RuntimeError(
-                f"No pre-built shfmt for {plat} and no `shfmt` found on PATH. "
-                f"Install shfmt manually (e.g. via your OS package manager) and retry.",
-            )
-        exe_name = "shfmt.exe" if sys.platform == "win32" else "shfmt"
-        os.makedirs(self.build_temp, exist_ok=True)
-        shutil.copy2(system_shfmt, os.path.join(self.build_temp, exe_name))
-        self.announce(
-            f"Using {system_shfmt} as shfmt source for this build",
-            level=logging.INFO,
-        )
 
 
 class install_shfmt(Command):
@@ -197,4 +201,5 @@ else:
 
     command_overrides["bdist_wheel"] = bdist_wheel
 
-setup(cmdclass=command_overrides)
+if __name__ == "__main__":
+    setup(cmdclass=command_overrides)

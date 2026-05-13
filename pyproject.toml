@@ -20,6 +20,9 @@ classifiers = [
 ]
 dynamic = ["version"]
 
+[project.optional-dependencies]
+test = ["pytest>=7"]
+
 [project.urls]
 Homepage = "https://github.com/maxwinterstein/shfmt-py"
 
