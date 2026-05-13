@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import os
 import re
-import subprocess
 import sys
 
 import requests
@@ -39,28 +38,6 @@ if not match:
 
 shfmt_version = match.group(1)
 print(f"[INFO] Found SHFMT_VERSION: {shfmt_version}")
-
-# Detect whether SHFMT_VERSION just changed (compared to HEAD~1). If so,
-# we reset PY_VERSION later so the new release starts at .1 rather than
-# carrying forward the previous wrapper's iteration counter.
-try:
-    prev_setup = subprocess.check_output(
-        ['git', 'show', 'HEAD~1:setup.py'], text=True,
-    )
-    prev_match = re.search(r"SHFMT_VERSION = '([^']+)'", prev_setup)
-    prev_shfmt_version = prev_match.group(1) if prev_match else None
-except subprocess.CalledProcessError:
-    prev_shfmt_version = None
-
-reset_py_version = (
-    prev_shfmt_version is not None
-    and prev_shfmt_version != shfmt_version
-)
-if reset_py_version:
-    print(
-        f"[INFO] SHFMT_VERSION changed ({prev_shfmt_version} -> {shfmt_version});"
-        f" will reset PY_VERSION to '1'.",
-    )
 
 api_url = GITHUB_API_URL.format(version=shfmt_version)
 print(f"[INFO] Fetching release metadata from: {api_url}")
@@ -132,15 +109,6 @@ for var_name, sha in checksums.items():
         updated = True
     else:
         print(f"[WARNING] Could not find pattern for {var_name}. Check your setup.py format.")
-
-if reset_py_version:
-    py_pattern = r"(PY_VERSION\s*=\s*)'[^']+'"
-    if re.search(py_pattern, new_content):
-        new_content = re.sub(py_pattern, r"\1'1'", new_content)
-        print('[INFO] Reset PY_VERSION to 1')
-        updated = True
-    else:
-        print('[WARNING] PY_VERSION not found in setup.py — leaving alone')
 
 if not updated:
     print('[WARNING] No checksums were updated. Maybe they are already correct?')
