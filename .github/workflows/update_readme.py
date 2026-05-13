@@ -6,32 +6,33 @@ import re
 
 
 def extract_version_from_setup():
-    print('[DEBUG] Opening setup.py to read the version...')  # Debug log for reading setup.py
-    # Open and read the setup.py file
+    print('[DEBUG] Opening setup.py to read the version...')
     with open('setup.py') as setup_file:
         setup_content = setup_file.read()
 
-    # Find the version variable in setup.py
-    version_match = re.search(r"SHFMT_VERSION\s*=\s*'(\d+\.\d+\.\d+)'", setup_content)
+    shfmt_match = re.search(r"SHFMT_VERSION\s*=\s*'(\d+\.\d+\.\d+)'", setup_content)
+    if not shfmt_match:
+        raise ValueError('SHFMT_VERSION not found in setup.py')
 
-    if version_match:
-        version = version_match.group(1)
-        print(f"[DEBUG] Found version in setup.py: {version}")  # Log the found version
-        return version
-    else:
-        raise ValueError('Version not found in setup.py')
+    py_match = re.search(r"PY_VERSION\s*=\s*'(\d+)'", setup_content)
+    if not py_match:
+        raise ValueError('PY_VERSION not found in setup.py')
+
+    shfmt_version = shfmt_match.group(1)
+    py_version = py_match.group(1)
+    print(f"[DEBUG] Found in setup.py: SHFMT_VERSION={shfmt_version}, PY_VERSION={py_version}")
+    return shfmt_version, py_version
 
 # Function to update the version in README.md
 
 
 def update_readme_version():
     try:
-        # Extract the version from setup.py
-        SHFMT_VERSION = extract_version_from_setup()
+        shfmt_version, py_version = extract_version_from_setup()
 
-        # Append '.0' to the version (if not already appended)
-        adjusted_version = f"{SHFMT_VERSION}.1"
-        print(f"[DEBUG] Adjusted version: {adjusted_version}")  # Debug log for adjusted version
+        # README uses the full pip package version: SHFMT_VERSION.PY_VERSION
+        adjusted_version = f"{shfmt_version}.{py_version}"
+        print(f"[DEBUG] Adjusted version: {adjusted_version}")
 
         # Open and read the README.md file
         print('[DEBUG] Opening README.md to read its content...')  # Debug log for reading README.md

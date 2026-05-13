@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import re
 import sys
 
@@ -7,7 +8,9 @@ import requests
 
 # File paths and URLs
 SHFMT_VERSION_FILE = 'setup.py'
-GITHUB_RELEASES_URL = 'https://github.com/mvdan/sh/releases/download/v{version}/sha256sums.txt'
+# mvdan/sh stopped shipping sha256sums.txt in v3.13.0+; GitHub now exposes
+# per-asset sha256 digests natively via the releases API.
+GITHUB_API_URL = 'https://api.github.com/repos/mvdan/sh/releases/tags/v{version}'
 
 ARCH_MAP = {
     'shfmt_v{version}_linux_arm': 'linux_arm',
@@ -36,37 +39,44 @@ if not match:
 shfmt_version = match.group(1)
 print(f"[INFO] Found SHFMT_VERSION: {shfmt_version}")
 
-checksum_url = GITHUB_RELEASES_URL.format(version=shfmt_version)
-print(f"[INFO] Downloading checksum file from: {checksum_url}")
+api_url = GITHUB_API_URL.format(version=shfmt_version)
+print(f"[INFO] Fetching release metadata from: {api_url}")
 
-# Step 2: Download `sha256sums.txt`
-response = requests.get(checksum_url)
+# Step 2: Fetch release metadata from GitHub
+# Use GITHUB_TOKEN if available to avoid the 60 req/hr unauthenticated limit;
+# GitHub Actions populates this automatically when the step has the env wired.
+headers = {}
+token = os.environ.get('GITHUB_TOKEN')
+if token:
+    headers['Authorization'] = f'Bearer {token}'
+response = requests.get(api_url, headers=headers)
 if response.status_code != 200:
-    print(f"[ERROR] Failed to download {checksum_url} (HTTP {response.status_code})")
+    print(f"[ERROR] Failed to fetch release metadata (HTTP {response.status_code})")
     sys.exit(1)
 
-checksums = {}
-lines = response.text.splitlines()
-print(f"[INFO] Downloaded checksum file ({len(lines)} lines). Processing...")
+assets = response.json().get('assets', [])
+print(f"[INFO] Got {len(assets)} release assets. Processing...")
 
-for line in lines:
-    parts = line.split()
-    if len(parts) != 2:
-        print(f"[WARNING] Skipping malformed line: {line}")
+checksums = {}
+for asset in assets:
+    name = asset['name']
+    expected_key = name.replace(shfmt_version, '{version}')
+
+    if expected_key not in ARCH_MAP:
+        print(f"[DEBUG] Skipping unrecognized asset: {name}")
         continue
 
-    sha, filename = parts
-    expected_key = filename.replace(shfmt_version, '{version}')
+    digest = asset.get('digest', '')
+    if not digest.startswith('sha256:'):
+        print(f"[WARNING] Asset {name} has no sha256 digest (got: {digest!r})")
+        continue
 
-    if expected_key in ARCH_MAP:
-        var_name = ARCH_MAP[expected_key].format(version=shfmt_version)
-        checksums[var_name] = sha
-        print(f"[INFO] Found checksum: {var_name} -> {sha}")
-    else:
-        print(f"[DEBUG] Skipping unrecognized file: {filename}")
+    var_name = ARCH_MAP[expected_key].format(version=shfmt_version)
+    checksums[var_name] = digest.removeprefix('sha256:')
+    print(f"[INFO] Found checksum: {var_name} -> {checksums[var_name]}")
 
 if not checksums:
-    print('[ERROR] No matching checksums found! Check the `sha256sums.txt` format.')
+    print('[ERROR] No checksums extracted! The release format may have changed again.')
     sys.exit(1)
 
 

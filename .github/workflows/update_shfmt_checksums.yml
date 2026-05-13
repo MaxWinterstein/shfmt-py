@@ -33,6 +33,8 @@ jobs:
         run: pip install requests
 
       - name: Run checksum update script
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python .github/workflows/update_shfmt_checksums.py
 
       - name: Run README update script
