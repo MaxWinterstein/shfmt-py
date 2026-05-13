@@ -90,12 +90,12 @@ for asset in assets:
         continue
 
     digest = asset.get('digest', '')
-    if not digest.startswith('sha256:'):
-        print(f"[WARNING] Asset {name} has no sha256 digest (got: {digest!r})")
+    if not re.fullmatch(r'sha256:[a-fA-F0-9]{64}', digest):
+        print(f"[WARNING] Asset {name} has no valid sha256 digest (got: {digest!r})")
         continue
 
     var_name = ARCH_MAP[expected_key].format(version=shfmt_version)
-    checksums[var_name] = digest.removeprefix('sha256:')
+    checksums[var_name] = digest.split(':', 1)[1].lower()
     print(f"[INFO] Found checksum: {var_name} -> {checksums[var_name]}")
 
 if not checksums:
