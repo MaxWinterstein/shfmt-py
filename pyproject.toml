@@ -23,8 +23,10 @@ dynamic = ["version"]
 [project.optional-dependencies]
 # setuptools is a build-time dep but not a runtime dep, so it isn't in the
 # venv after `pip install`. Tests load setup.py (which imports setuptools)
-# via importlib, so they need it explicitly.
-test = ["pytest>=7", "setuptools"]
+# via importlib, so they need it explicitly. Version floor matches the
+# build-system requirement — setuptools.command.build (used in setup.py)
+# was added in 62, and we already declare >=64 above.
+test = ["pytest>=7", "setuptools>=64"]
 
 [project.urls]
 Homepage = "https://github.com/maxwinterstein/shfmt-py"
