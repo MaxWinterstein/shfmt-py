@@ -1,7 +1,3 @@
-Copyright for portions of project shfmt-py are held by Ryan Rhee, 2019
-as part of the project located at https://github.com/shellcheck-py/shellcheck-py.
-All other copyright for this project are held by Max Winterstein, 2021.
-
 MIT License
 
 Copyright (c) 2019 Ryan Rhee
@@ -24,3 +20,9 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+Copyright for portions of project shfmt-py are held by Ryan Rhee, 2019,
+as part of the project located at https://github.com/shellcheck-py/shellcheck-py.
+All other copyright for this project are held by Max Winterstein, 2021.
