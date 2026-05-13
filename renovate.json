@@ -10,7 +10,7 @@
         "/\\.py$/"
       ],
       "matchStrings": [
-        "SHFMT_VERSION = '(?<currentValue>[^']+)'"
+        "SHFMT_VERSION = [\"'](?<currentValue>[^\"']+)[\"']"
       ],
       "depNameTemplate": "mvdan/sh",
       "datasourceTemplate": "github-releases"
