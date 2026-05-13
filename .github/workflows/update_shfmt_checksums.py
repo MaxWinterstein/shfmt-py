@@ -49,7 +49,7 @@ headers = {}
 token = os.environ.get('GITHUB_TOKEN')
 if token:
     headers['Authorization'] = f'Bearer {token}'
-response = requests.get(api_url, headers=headers)
+response = requests.get(api_url, headers=headers, timeout=30)
 if response.status_code != 200:
     print(f"[ERROR] Failed to fetch release metadata (HTTP {response.status_code})")
     sys.exit(1)
@@ -77,6 +77,14 @@ for asset in assets:
 
 if not checksums:
     print('[ERROR] No checksums extracted! The release format may have changed again.')
+    sys.exit(1)
+
+# Partial extraction would silently leave stale hashes in setup.py for any
+# missing platform — fail loud instead.
+expected = set(ARCH_MAP.values())
+missing = expected - set(checksums)
+if missing:
+    print(f"[ERROR] Missing checksums for expected platforms: {sorted(missing)}")
     sys.exit(1)
 
 
