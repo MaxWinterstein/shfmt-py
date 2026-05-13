@@ -37,11 +37,28 @@ Sample `.pre-commit-config.yaml`:
     - id: shfmt
 ```
 
+## Versioning
+
+`shfmt-py` is independently versioned. The PyPI version does **not** directly
+mirror the bundled `shfmt` version — check each GitHub release's notes for the
+exact `shfmt` version that release bundles.
+
+- **Major** — breaking change to `shfmt-py` itself (e.g. dropping a Python
+  version, renaming the pre-commit hook id).
+- **Minor** — new upstream `shfmt` release bundled.
+- **Patch** — wrapper-only fix (hash regeneration, CI changes affecting users,
+  etc.).
+
+Releases `3.x.y.z` and earlier used a 4-segment scheme aligned with upstream
+`shfmt`. From `v4.0.0` onwards `shfmt-py` follows standard semver.
+
 ## FAQ
 
 Q: It won't get updated via e.g. `Renovate Bot`
 
-A: See https://github.com/shfmt-py/update-via-renovate .
+A: Releases `v4.0.0` and onwards use standard semver — no special Renovate
+config needed. For older `3.x.y.z` releases you'll need
+`"versioning": "pep440"` (or see https://github.com/shfmt-py/update-via-renovate).
 
 Q: I get something like `SSL: CERTIFICATE_VERIFY_FAILED` on macOS
 
