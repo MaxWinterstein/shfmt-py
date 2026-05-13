@@ -9,9 +9,9 @@ import stat
 import sys
 import urllib.request
 
-from distutils.command.build import build as orig_build
-from distutils.core import Command
+from setuptools import Command
 from setuptools import setup
+from setuptools.command.build import build as orig_build
 from setuptools.command.install import install as orig_install
 
 linux_arm = '774b9a86cff4844179328cfbab2f602e75dcb68132e918e5271d015b3295c9c7'
