@@ -21,6 +21,7 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python }}
-      - run: pip install .
+      - run: pip install ".[test]"
+      - run: pytest tests/
       - run: shfmt --version
       - run: shfmt --help

@@ -3,8 +3,10 @@ from __future__ import annotations
 
 import hashlib
 import http
+import logging
 import os.path
 import platform
+import shutil
 import stat
 import sys
 import urllib.request
@@ -95,6 +97,37 @@ def save_executable(data: bytes, base_dir: str):
     os.chmod(output_path, mode)
 
 
+logger = logging.getLogger(__name__)
+
+
+def fall_back_to_path_shfmt(build_temp: str) -> None:
+    """Copy a system-installed shfmt into build_temp.
+
+    Used when the current platform has no pre-built binary in
+    POSTFIX_SHA256 (e.g. FreeBSD). Raises RuntimeError if no
+    shfmt is found on PATH either.
+    """
+    plat = f"{sys.platform}:{platform.machine()}"
+    logger.warning("No pre-built shfmt for %s; looking for one on PATH", plat)
+    system_shfmt = shutil.which("shfmt")
+    if system_shfmt is None:
+        raise RuntimeError(
+            f"No pre-built shfmt for {plat} and no `shfmt` found on PATH. "
+            f"Install shfmt manually (e.g. via your OS package manager) and retry.",
+        )
+    # On Windows, shutil.which honors PATHEXT and could find shfmt.bat / .cmd
+    # / .com etc. Renaming any of those to shfmt.exe produces a file Windows
+    # refuses to execute.
+    if sys.platform == "win32" and not system_shfmt.lower().endswith(".exe"):
+        raise RuntimeError(
+            f"Found {system_shfmt} on PATH, but it isn't a .exe; install the official shfmt.exe for Windows and retry.",
+        )
+    exe_name = "shfmt.exe" if sys.platform == "win32" else "shfmt"
+    os.makedirs(build_temp, exist_ok=True)
+    shutil.copy2(system_shfmt, os.path.join(build_temp, exe_name))
+    logger.info("Using %s as shfmt source for this build", system_shfmt)
+
+
 class build(orig_build):
     sub_commands = orig_build.sub_commands + [("fetch_binaries", None)]
 
@@ -113,8 +146,14 @@ class fetch_binaries(Command):
         self.set_undefined_options("build", ("build_temp", "build_temp"))
 
     def run(self):
-        # save binary to self.build_temp
-        url, sha256 = get_download_url()
+        # Try the pre-built binary for this platform first; fall back to a
+        # system-installed shfmt on PATH if the platform isn't in the
+        # download manifest (e.g. FreeBSD, illumos).
+        try:
+            url, sha256 = get_download_url()
+        except KeyError:
+            fall_back_to_path_shfmt(self.build_temp)
+            return
         data = download(url, sha256)
         save_executable(data, self.build_temp)
 
@@ -169,4 +208,5 @@ else:
 
     command_overrides["bdist_wheel"] = bdist_wheel
 
-setup(cmdclass=command_overrides)
+if __name__ == "__main__":
+    setup(cmdclass=command_overrides)
