@@ -22,7 +22,7 @@ darwin_arm64 = 'd903802e0ce3ecbc82b98512f55ba370b0d37a93f3f78de394f5b657052b33dd
 windows_amd64_exe = 'c8bda517ba1c640ce4a715c0fa665439ddbe4357ba5e9b77b0e51e70e2b9c94b'
 windows_386_exe = '92c1ef0af344a10f2cefe3ce4bc6793ae8b3719ac08fc01802bbd8eae105e534'
 
-SHFMT_VERSION = '3.12.0'
+SHFMT_VERSION = '3.13.0'
 POSTFIX_SHA256 = {
     ('linux', 'armv6hf'): (
         'linux_arm',
