@@ -1,13 +1,17 @@
 from __future__ import annotations
 
+import os
 import re
+import subprocess
 import sys
 
 import requests
 
 # File paths and URLs
 SHFMT_VERSION_FILE = 'setup.py'
-GITHUB_RELEASES_URL = 'https://github.com/mvdan/sh/releases/download/v{version}/sha256sums.txt'
+# mvdan/sh stopped shipping sha256sums.txt in v3.13.0+; GitHub now exposes
+# per-asset sha256 digests natively via the releases API.
+GITHUB_API_URL = 'https://api.github.com/repos/mvdan/sh/releases/tags/v{version}'
 
 ARCH_MAP = {
     'shfmt_v{version}_linux_arm': 'linux_arm',
@@ -36,37 +40,74 @@ if not match:
 shfmt_version = match.group(1)
 print(f"[INFO] Found SHFMT_VERSION: {shfmt_version}")
 
-checksum_url = GITHUB_RELEASES_URL.format(version=shfmt_version)
-print(f"[INFO] Downloading checksum file from: {checksum_url}")
+# Detect whether SHFMT_VERSION just changed (compared to HEAD~1). If so,
+# we reset PY_VERSION later so the new release starts at .1 rather than
+# carrying forward the previous wrapper's iteration counter.
+try:
+    prev_setup = subprocess.check_output(
+        ['git', 'show', 'HEAD~1:setup.py'], text=True,
+    )
+    prev_match = re.search(r"SHFMT_VERSION = '([^']+)'", prev_setup)
+    prev_shfmt_version = prev_match.group(1) if prev_match else None
+except subprocess.CalledProcessError:
+    prev_shfmt_version = None
 
-# Step 2: Download `sha256sums.txt`
-response = requests.get(checksum_url)
+reset_py_version = (
+    prev_shfmt_version is not None
+    and prev_shfmt_version != shfmt_version
+)
+if reset_py_version:
+    print(
+        f"[INFO] SHFMT_VERSION changed ({prev_shfmt_version} -> {shfmt_version});"
+        f" will reset PY_VERSION to '1'.",
+    )
+
+api_url = GITHUB_API_URL.format(version=shfmt_version)
+print(f"[INFO] Fetching release metadata from: {api_url}")
+
+# Step 2: Fetch release metadata from GitHub
+# Use GITHUB_TOKEN if available to avoid the 60 req/hr unauthenticated limit;
+# GitHub Actions populates this automatically when the step has the env wired.
+headers = {}
+token = os.environ.get('GITHUB_TOKEN')
+if token:
+    headers['Authorization'] = f'Bearer {token}'
+response = requests.get(api_url, headers=headers, timeout=30)
 if response.status_code != 200:
-    print(f"[ERROR] Failed to download {checksum_url} (HTTP {response.status_code})")
+    print(f"[ERROR] Failed to fetch release metadata (HTTP {response.status_code})")
     sys.exit(1)
 
-checksums = {}
-lines = response.text.splitlines()
-print(f"[INFO] Downloaded checksum file ({len(lines)} lines). Processing...")
+assets = response.json().get('assets', [])
+print(f"[INFO] Got {len(assets)} release assets. Processing...")
 
-for line in lines:
-    parts = line.split()
-    if len(parts) != 2:
-        print(f"[WARNING] Skipping malformed line: {line}")
+checksums = {}
+for asset in assets:
+    name = asset['name']
+    expected_key = name.replace(shfmt_version, '{version}')
+
+    if expected_key not in ARCH_MAP:
+        print(f"[DEBUG] Skipping unrecognized asset: {name}")
         continue
 
-    sha, filename = parts
-    expected_key = filename.replace(shfmt_version, '{version}')
+    digest = asset.get('digest', '')
+    if not re.fullmatch(r'sha256:[a-fA-F0-9]{64}', digest):
+        print(f"[WARNING] Asset {name} has no valid sha256 digest (got: {digest!r})")
+        continue
 
-    if expected_key in ARCH_MAP:
-        var_name = ARCH_MAP[expected_key].format(version=shfmt_version)
-        checksums[var_name] = sha
-        print(f"[INFO] Found checksum: {var_name} -> {sha}")
-    else:
-        print(f"[DEBUG] Skipping unrecognized file: {filename}")
+    var_name = ARCH_MAP[expected_key].format(version=shfmt_version)
+    checksums[var_name] = digest.split(':', 1)[1].lower()
+    print(f"[INFO] Found checksum: {var_name} -> {checksums[var_name]}")
 
 if not checksums:
-    print('[ERROR] No matching checksums found! Check the `sha256sums.txt` format.')
+    print('[ERROR] No checksums extracted! The release format may have changed again.')
+    sys.exit(1)
+
+# Partial extraction would silently leave stale hashes in setup.py for any
+# missing platform — fail loud instead.
+expected = set(ARCH_MAP.values())
+missing = expected - set(checksums)
+if missing:
+    print(f"[ERROR] Missing checksums for expected platforms: {sorted(missing)}")
     sys.exit(1)
 
 
@@ -91,6 +132,15 @@ for var_name, sha in checksums.items():
         updated = True
     else:
         print(f"[WARNING] Could not find pattern for {var_name}. Check your setup.py format.")
+
+if reset_py_version:
+    py_pattern = r"(PY_VERSION\s*=\s*)'[^']+'"
+    if re.search(py_pattern, new_content):
+        new_content = re.sub(py_pattern, r"\1'1'", new_content)
+        print('[INFO] Reset PY_VERSION to 1')
+        updated = True
+    else:
+        print('[WARNING] PY_VERSION not found in setup.py — leaving alone')
 
 if not updated:
     print('[WARNING] No checksums were updated. Maybe they are already correct?')

@@ -14,15 +14,15 @@ from distutils.core import Command
 from setuptools import setup
 from setuptools.command.install import install as orig_install
 
-linux_arm = 'a93c1ed5be25ce9dd0fd62c4cf0af7453740d234725877b973e6c6a8c7598500'
-linux_arm64 = '5f3fe3fa6a9f766e6a182ba79a94bef8afedafc57db0b1ad32b0f67fae971ba4'
-linux_amd64 = 'd9fbb2a9c33d13f47e7618cf362a914d029d02a6df124064fff04fd688a745ea'
-darwin_amd64 = 'c31548693de6584e6164b7ed5fbb7b4a083f2d937ca94b4e0ddf59aa461a85e4'
-darwin_arm64 = 'd903802e0ce3ecbc82b98512f55ba370b0d37a93f3f78de394f5b657052b33dd'
-windows_amd64_exe = 'c8bda517ba1c640ce4a715c0fa665439ddbe4357ba5e9b77b0e51e70e2b9c94b'
-windows_386_exe = '92c1ef0af344a10f2cefe3ce4bc6793ae8b3719ac08fc01802bbd8eae105e534'
+linux_arm = '774b9a86cff4844179328cfbab2f602e75dcb68132e918e5271d015b3295c9c7'
+linux_arm64 = '2091a31afd47742051a77bf7cfd175533ab07e924c20ef3151cd108fa1cab5b0'
+linux_amd64 = '70aa99784703a8d6569bbf0b1e43e1a91906a4166bf1a79de42050a6d0de7551'
+darwin_amd64 = 'b6890a0009abf71d36d7c536ad56e3132c547ceb77cd5d5ee62b3469ab4e9417'
+darwin_arm64 = '650970603b5946dc6041836ddcfa7a19d99b5da885e4687f64575508e99cf718'
+windows_amd64_exe = '62241aaf6b0ca236f8625d8892784b73fa67ad40bc677a1ad1a64ae395f6a7d5'
+windows_386_exe = 'f3e32b2a320a3053837add32803d7fb3b730d3f10b84a867d327a549ef068fa0'
 
-SHFMT_VERSION = '3.12.0'
+SHFMT_VERSION = '3.13.0'
 POSTFIX_SHA256 = {
     ('linux', 'armv6hf'): (
         'linux_arm',
@@ -55,7 +55,7 @@ POSTFIX_SHA256 = {
 }
 POSTFIX_SHA256[('cygwin', 'x86_64')] = POSTFIX_SHA256[('win32', 'AMD64')]
 POSTFIX_SHA256[('linux', 'armv7l')] = POSTFIX_SHA256[('linux', 'armv6hf')]
-PY_VERSION = '2'
+PY_VERSION = '1'
 
 
 def get_download_url() -> tuple[str, str]:
