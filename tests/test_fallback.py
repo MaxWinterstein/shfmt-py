@@ -51,7 +51,7 @@ def test_fallback_copies_system_shfmt(setup_mod, tmp_path, monkeypatch):
 
     copied = build_temp / _exe_basename()
     assert copied.exists(), "fall_back_to_path_shfmt did not copy the binary"
-    assert copied.read_text() == fake_shfmt.read_text(), "copy is not byte-identical"
+    assert copied.read_bytes() == fake_shfmt.read_bytes(), "copy is not byte-identical"
 
 
 def test_fallback_raises_when_no_shfmt_on_path(setup_mod, tmp_path, monkeypatch):

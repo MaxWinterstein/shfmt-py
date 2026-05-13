@@ -115,6 +115,13 @@ def fall_back_to_path_shfmt(build_temp: str) -> None:
             f"No pre-built shfmt for {plat} and no `shfmt` found on PATH. "
             f"Install shfmt manually (e.g. via your OS package manager) and retry.",
         )
+    # On Windows, shutil.which honors PATHEXT and could find shfmt.bat / .cmd
+    # / .com etc. Renaming any of those to shfmt.exe produces a file Windows
+    # refuses to execute.
+    if sys.platform == "win32" and not system_shfmt.lower().endswith(".exe"):
+        raise RuntimeError(
+            f"Found {system_shfmt} on PATH, but it isn't a .exe; install the official shfmt.exe for Windows and retry.",
+        )
     exe_name = "shfmt.exe" if sys.platform == "win32" else "shfmt"
     os.makedirs(build_temp, exist_ok=True)
     shutil.copy2(system_shfmt, os.path.join(build_temp, exe_name))
