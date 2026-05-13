@@ -15,15 +15,15 @@ from setuptools import Command, setup
 from setuptools.command.build import build as orig_build
 from setuptools.command.install import install as orig_install
 
-linux_arm = "774b9a86cff4844179328cfbab2f602e75dcb68132e918e5271d015b3295c9c7"
-linux_arm64 = "2091a31afd47742051a77bf7cfd175533ab07e924c20ef3151cd108fa1cab5b0"
-linux_amd64 = "70aa99784703a8d6569bbf0b1e43e1a91906a4166bf1a79de42050a6d0de7551"
-darwin_amd64 = "b6890a0009abf71d36d7c536ad56e3132c547ceb77cd5d5ee62b3469ab4e9417"
-darwin_arm64 = "650970603b5946dc6041836ddcfa7a19d99b5da885e4687f64575508e99cf718"
-windows_amd64_exe = "62241aaf6b0ca236f8625d8892784b73fa67ad40bc677a1ad1a64ae395f6a7d5"
-windows_386_exe = "f3e32b2a320a3053837add32803d7fb3b730d3f10b84a867d327a549ef068fa0"
+linux_arm = "f6c23b95971bcc5ebf86411bccefb79f1e99f8efe7c722d980a3f244838b1398"
+linux_arm64 = "32d92acaa5cd8abb29fc49dac123dc412442d5713967819d8af2c29f1b3857c7"
+linux_amd64 = "fb096c5d1ac6beabbdbaa2874d025badb03ee07929f0c9ff67563ce8c75398b1"
+darwin_amd64 = "6feedafc72915794163114f512348e2437d080d0047ef8b8fa2ec63b575f12af"
+darwin_arm64 = "9680526be4a66ea1ffe988ed08af58e1400fe1e4f4aef5bd88b20bb9b3da33f8"
+windows_amd64_exe = "60cd368533d0ad73fa86d93d5bbf95ef40587245ce684ed138c1b31557b5fe97"
+windows_386_exe = "9b4f368b837feb883a3b2bf38a46a94dcab4bca4b7c3e19f6710e0e09a56ce7c"
 
-SHFMT_VERSION = "3.13.0"
+SHFMT_VERSION = "3.13.1"
 POSTFIX_SHA256 = {
     ("linux", "armv6hf"): (
         "linux_arm",
