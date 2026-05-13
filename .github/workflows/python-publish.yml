@@ -1,11 +1,3 @@
-# This workflow will upload a Python Package using Twine when a release is created
-# For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
-
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
 name: Upload Python Package
 
 on:
@@ -13,27 +5,83 @@ on:
     types: [published]
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
+  build-wheels:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            name: linux_x86_64
+            host_platform: manylinux2014_x86_64
+          - os: ubuntu-24.04-arm
+            name: linux_aarch64
+            host_platform: manylinux2014_aarch64
+          - os: macos-latest
+            name: macos_arm64
+            host_platform: macosx-11.0-arm64
+          - os: macos-15-intel
+            name: macos_x86_64
+            host_platform: macosx-10.9-x86_64
+          - os: windows-latest
+            name: windows_amd64
+            host_platform: ''
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v6
         with:
-          # setuptools-scm derives the package version from the latest git
-          # tag, so we need the full history (not the default shallow clone).
+          # setuptools-scm derives the version from the latest git tag.
           fetch-depth: 0
-      - name: Set up Python
-        uses: actions/setup-python@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.x"
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install build
-      - name: Build package
-        run: python -m build --sdist
-      - name: Publish package
-        uses: pypa/gh-action-pypi-publish@e9ccbe5a211ba3e8363f472cae362b56b104e796
+      - run: pip install build
+      - name: Build wheel
+        env:
+          # Override the platform tag so the wheel is tagged for broad
+          # compatibility (e.g. manylinux2014 instead of bare linux_*).
+          # An empty value leaves the platform tag at setuptools' default.
+          _PYTHON_HOST_PLATFORM: ${{ matrix.host_platform }}
+        run: python -m build --wheel
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheel-${{ matrix.name }}
+          path: dist/*.whl
+          if-no-files-found: error
+
+  build-sdist:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.x"
+      - run: pip install build
+      - run: python -m build --sdist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sdist
+          path: dist/*.tar.gz
+          if-no-files-found: error
+
+  publish:
+    needs: [build-wheels, build-sdist]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: List artifacts to publish
+        run: ls -la dist/
+      - uses: pypa/gh-action-pypi-publish@e9ccbe5a211ba3e8363f472cae362b56b104e796
         with:
           user: __token__
           password: ${{ secrets.PYPI_API_TOKEN }}
