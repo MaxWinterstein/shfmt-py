@@ -44,8 +44,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python .github/workflows/update_shfmt_checksums.py
 
-      - name: Run README update script
-        run: python .github/workflows/update_readme.py
-
       - uses: stefanzweifel/git-auto-commit-action@v7
         if: ${{ env.commit_message != 'Apply automatic changes' }}

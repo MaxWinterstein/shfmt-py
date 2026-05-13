@@ -1,0 +1,38 @@
+name: Sync README rev to latest release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: master
+
+      - name: Rewrite rev in README.md
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          sed -i -E "s|(rev:[[:space:]]+)v?[0-9]+(\.[0-9]+)+|\\1${TAG}|" README.md
+          git --no-pager diff -- README.md
+
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          # PAT (not GITHUB_TOKEN) so the resulting PR triggers downstream
+          # CI workflows. GH suppresses workflow runs caused by GITHUB_TOKEN.
+          token: ${{ secrets.PAT }}
+          branch: sync-readme-to-release
+          delete-branch: true
+          title: "Sync README rev to ${{ github.event.release.tag_name }}"
+          commit-message: "Sync README rev to ${{ github.event.release.tag_name }}"
+          body: |
+            Automated update of the pre-commit example in `README.md` after a new release.
+
+            Triggered by release [${{ github.event.release.tag_name }}](${{ github.event.release.html_url }}).
