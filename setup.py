@@ -3,8 +3,10 @@ from __future__ import annotations
 
 import hashlib
 import http
+import logging
 import os.path
 import platform
+import shutil
 import stat
 import sys
 import urllib.request
@@ -113,10 +115,36 @@ class fetch_binaries(Command):
         self.set_undefined_options("build", ("build_temp", "build_temp"))
 
     def run(self):
-        # save binary to self.build_temp
-        url, sha256 = get_download_url()
+        # Try the pre-built binary for this platform first; fall back to a
+        # system-installed shfmt on PATH if the platform isn't in the
+        # download manifest (e.g. FreeBSD, illumos).
+        try:
+            url, sha256 = get_download_url()
+        except KeyError:
+            self._fall_back_to_path_shfmt()
+            return
         data = download(url, sha256)
         save_executable(data, self.build_temp)
+
+    def _fall_back_to_path_shfmt(self):
+        plat = f"{sys.platform}:{platform.machine()}"
+        self.announce(
+            f"No pre-built shfmt for {plat}; looking for one on PATH",
+            level=logging.WARNING,
+        )
+        system_shfmt = shutil.which("shfmt")
+        if system_shfmt is None:
+            raise RuntimeError(
+                f"No pre-built shfmt for {plat} and no `shfmt` found on PATH. "
+                f"Install shfmt manually (e.g. via your OS package manager) and retry.",
+            )
+        exe_name = "shfmt.exe" if sys.platform == "win32" else "shfmt"
+        os.makedirs(self.build_temp, exist_ok=True)
+        shutil.copy2(system_shfmt, os.path.join(self.build_temp, exe_name))
+        self.announce(
+            f"Using {system_shfmt} as shfmt source for this build",
+            level=logging.INFO,
+        )
 
 
 class install_shfmt(Command):
