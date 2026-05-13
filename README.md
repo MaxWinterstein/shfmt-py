@@ -8,7 +8,7 @@
 
 Python-installable wrapper for [shfmt], the shell script formatter.
 
-Internally this package downloads the pre-built `shfmt` binary for your platform at install time.
+For most platforms, the pre-built `shfmt` binary is bundled in a wheel and `pip install` does not need network access. On platforms without a pre-built wheel, the sdist fallback downloads the binary at install time (or copies one from your `PATH` if no pre-built is available, e.g. on FreeBSD).
 
 Modeled after [shellcheck-py], adapted for `shfmt`.
 
