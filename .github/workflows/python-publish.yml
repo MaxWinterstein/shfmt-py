@@ -1,8 +1,12 @@
-name: Upload Python Package
+name: Build (and publish on release) Python Package
 
 on:
   release:
     types: [published]
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
 
 jobs:
   build-wheels:
@@ -71,6 +75,9 @@ jobs:
 
   publish:
     needs: [build-wheels, build-sdist]
+    # Only actually publish on real release events; the build matrix above
+    # still runs on every PR / push to catch wheel-build regressions early.
+    if: github.event_name == 'release'
     runs-on: ubuntu-latest
     permissions:
       contents: read
