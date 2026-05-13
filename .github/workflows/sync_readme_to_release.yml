@@ -25,9 +25,11 @@ jobs:
 
       - uses: peter-evans/create-pull-request@v8
         with:
-          # PAT (not GITHUB_TOKEN) so the resulting PR triggers downstream
-          # CI workflows. GH suppresses workflow runs caused by GITHUB_TOKEN.
-          token: ${{ secrets.PAT }}
+          # Uses the default GITHUB_TOKEN (job permissions above grant
+          # contents:write and pull-requests:write). The auto-opened PR
+          # will not trigger downstream CI workflows — accepted trade-off
+          # for a README-rev-only change. Previously used secrets.PAT but
+          # that token lacked pull_requests:write scope.
           branch: sync-readme-to-release
           delete-branch: true
           title: "Sync README rev to ${{ github.event.release.tag_name }}"
