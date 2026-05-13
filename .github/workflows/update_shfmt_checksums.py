@@ -31,7 +31,7 @@ except FileNotFoundError:
     print("[ERROR] setup.py not found!")
     sys.exit(1)
 
-match = re.search(r"SHFMT_VERSION = '([^']+)'", content)
+match = re.search(r"""SHFMT_VERSION = ["']([^"']+)["']""", content)
 if not match:
     print("[ERROR] Could not find SHFMT_VERSION in setup.py!")
     sys.exit(1)
@@ -97,8 +97,9 @@ updated = False
 # Directly update variables in setup.py with the new checksums
 for var_name, sha in checksums.items():
     print(f"[DEBUG] var_name: {var_name}")
-    pattern = rf"({var_name}\s*=\s*)\'[a-fA-F0-9]{{64}}\'"
-    replacement = rf"\1'{sha}'"  # Corrected line
+    # Match either quote style (legacy single-quoted or current double-quoted).
+    pattern = rf"""({var_name}\s*=\s*)["'][a-fA-F0-9]{{64}}["']"""
+    replacement = rf'\1"{sha}"'  # Always emit double quotes (codebase convention).
 
     # Debug: print the pattern we are searching for
     print(f"[DEBUG] Searching for pattern: {pattern}")
