@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=64", "setuptools-scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "shfmt-py"
+description = "Python wrapper around invoking shfmt (https://github.com/mvdan/sh)"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+    {name = "Max Winterstein", email = "github@winterstein.io"},
+]
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/maxwinterstein/shfmt-py"
+
+[tool.setuptools_scm]
+# Strip any local version segment so PyPI accepts the version.
+local_scheme = "no-local-version"
+
+[tool.setuptools]
+# No Python modules to package — this distribution ships only the shfmt
+# binary, installed via the custom commands in setup.py.
+py-modules = []

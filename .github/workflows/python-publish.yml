@@ -18,6 +18,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
+        with:
+          # setuptools-scm derives the package version from the latest git
+          # tag, so we need the full history (not the default shallow clone).
+          fetch-depth: 0
       - name: Set up Python
         uses: actions/setup-python@v6
         with:

@@ -55,7 +55,9 @@ POSTFIX_SHA256 = {
 }
 POSTFIX_SHA256[('cygwin', 'x86_64')] = POSTFIX_SHA256[('win32', 'AMD64')]
 POSTFIX_SHA256[('linux', 'armv7l')] = POSTFIX_SHA256[('linux', 'armv6hf')]
-PY_VERSION = '1'
+# Package version is now derived from the latest git tag via setuptools-scm
+# (configured in pyproject.toml). SHFMT_VERSION above stays — it's needed to
+# construct the binary download URL.
 
 
 def get_download_url() -> tuple[str, str]:
@@ -169,4 +171,4 @@ else:
 
     command_overrides['bdist_wheel'] = bdist_wheel
 
-setup(version=f'{SHFMT_VERSION}.{PY_VERSION}', cmdclass=command_overrides)
+setup(cmdclass=command_overrides)
