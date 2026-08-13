@@ -190,10 +190,16 @@ command_overrides = {
 
 
 try:
-    from wheel.bdist_wheel import bdist_wheel as orig_bdist_wheel
+    # setuptools >= 70.1 ships bdist_wheel directly; prefer it to avoid the
+    # FutureWarning emitted by the standalone 'wheel' package.
+    from setuptools.command.bdist_wheel import bdist_wheel as orig_bdist_wheel
 except ImportError:
-    pass
-else:
+    try:
+        from wheel.bdist_wheel import bdist_wheel as orig_bdist_wheel
+    except ImportError:
+        orig_bdist_wheel = None
+
+if orig_bdist_wheel is not None:
 
     class bdist_wheel(orig_bdist_wheel):
         def finalize_options(self):
