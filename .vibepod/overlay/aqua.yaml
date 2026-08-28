@@ -1,9 +1,11 @@
 ---
 # Tools installed into the vibepod overlay image, see ./Dockerfile.
 #
-# After bumping a version here — or adding/removing a package — regenerate the
-# artifact hashes (from the pod). --prune drops the entries of the old version,
-# which aqua otherwise leaves behind:
+# Renovate's own bumps are handled by .github/workflows/
+# update_aqua_checksums.yml. After bumping a version here by hand — or
+# adding/removing a package — regenerate the artifact hashes (from the pod).
+# --prune drops the entries of the old version, which aqua otherwise leaves
+# behind:
 #   AQUA_DISABLE_SLSA=true aqua -c .vibepod/overlay/aqua.yaml \
 #     update-checksum -a --prune
 checksum:
@@ -21,5 +23,6 @@ registries:
 packages:
   # gh
   - name: cli/cli@v2.98.0
-  # uv — the Python package/venv manager this repo builds with.
+  # uv — the Python package/venv manager used inside the pod. The repo's own
+  # CI builds with pip.
   - name: astral-sh/uv@0.12.7

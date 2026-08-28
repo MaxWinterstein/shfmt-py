@@ -8,6 +8,15 @@
     {
       "customType": "regex",
       "managerFilePatterns": [
+        "/^\\.vibepod/overlay/Dockerfile$/"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\nARG \\w+=(?<currentValue>\\S+)"
+      ]
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
         "/\\.py$/"
       ],
       "matchStrings": [

@@ -16,10 +16,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 #     `aqua update-aqua` with no argument and installs whatever is latest.
 #   * AQUA_DISABLE_SLSA=true — aqua's SLSA step fetches
 #     tuf-repo-cdn.sigstore.dev, which the vibepod proxy answers with 403.
-#     The installer's built-in sha256 list plus aqua-checksums.json still cover
-#     every downloaded artifact. Drop it if sigstore gets allowlisted.
+#     What still covers each download: AQUA_INSTALLER_SHA256 for the installer
+#     script, the installer's built-in sha256 list for the aqua it bootstraps
+#     with, aqua-checksums.json for gh, uv and the registry. The one artifact
+#     left to aqua's own GitHub attestation check is the pinned AQUA_VERSION
+#     binary that `update-aqua` fetches. Drop the flag if sigstore gets
+#     allowlisted.
+#
+# The two version pins below are bumped by Renovate; .github/workflows/
+# update_aqua_checksums.yml refreshes AQUA_INSTALLER_SHA256 to match on
+# those PRs, since Renovate cannot compute it itself.
+# renovate: datasource=github-releases depName=aquaproj/aqua-installer
 ARG AQUA_INSTALLER_VERSION=v4.0.5
 ARG AQUA_INSTALLER_SHA256=451028d56959cc738564885b1dbebc2691ea038ffde04e2472e4d486a3591146
+# renovate: datasource=github-releases depName=aquaproj/aqua
 ARG AQUA_VERSION=v2.62.3
 # ARG, not ENV: the build steps below need it, but if it persisted into the
 # image every bare `aqua` call by the non-root runtime user would try to write
@@ -28,9 +38,11 @@ ARG AQUA_ROOT_DIR=/opt/aqua
 
 COPY aqua.yaml aqua-checksums.json /opt/aqua/
 
-# The last three lines are the smoke test. The gh version is asserted rather
-# than just executed because aqua carries its own older gh for attestation
-# checks and `aqua cp gh` falls back to that one when the pinned package fails.
+# The last four lines are the smoke test, and they run after the pkgs dir is
+# removed so they also prove the copied binaries stand alone. The gh version is
+# asserted rather than just executed because aqua carries its own older gh for
+# attestation checks and `aqua cp gh` falls back to that one when the pinned
+# package fails.
 RUN set -eux; \
     cd /tmp; \
     curl -sSfL -O "https://raw.githubusercontent.com/aquaproj/aqua-installer/${AQUA_INSTALLER_VERSION}/aqua-installer"; \
