@@ -1,0 +1,25 @@
+---
+# Tools installed into the vibepod overlay image, see ./Dockerfile.
+#
+# After bumping a version here — or adding/removing a package — regenerate the
+# artifact hashes (from the pod). --prune drops the entries of the old version,
+# which aqua otherwise leaves behind:
+#   AQUA_DISABLE_SLSA=true aqua -c .vibepod/overlay/aqua.yaml \
+#     update-checksum -a --prune
+checksum:
+  # Off by default in aqua — without these two, installs are not verified.
+  enabled: true
+  require_checksum: true
+  # The overlay only ever builds for Linux; amd64 is here so the same
+  # aqua-checksums.json works on an Intel host.
+  supported_envs:
+    - linux/amd64
+    - linux/arm64
+registries:
+  - type: standard
+    ref: v4.556.0  # renovate: depName=aquaproj/aqua-registry
+packages:
+  # gh
+  - name: cli/cli@v2.98.0
+  # uv — the Python package/venv manager this repo builds with.
+  - name: astral-sh/uv@0.12.7
