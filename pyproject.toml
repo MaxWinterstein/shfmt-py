@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=64", "setuptools-scm>=8"]
+requires = ["setuptools>=70.1", "setuptools-scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -25,8 +25,8 @@ dynamic = ["version"]
 # venv after `pip install`. Tests load setup.py (which imports setuptools)
 # via importlib, so they need it explicitly. Version floor matches the
 # build-system requirement — setuptools.command.build (used in setup.py)
-# was added in 62, and we already declare >=64 above.
-test = ["pytest>=7", "setuptools>=64"]
+# was added in 62, and we already declare >=70.1 above.
+test = ["pytest>=7", "setuptools>=70.1"]
 
 [project.urls]
 Homepage = "https://github.com/maxwinterstein/shfmt-py"
