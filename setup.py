@@ -12,6 +12,7 @@ import sys
 import urllib.request
 
 from setuptools import Command, setup
+from setuptools.command.bdist_wheel import bdist_wheel as orig_bdist_wheel
 from setuptools.command.build import build as orig_build
 from setuptools.command.install import install as orig_install
 
@@ -181,38 +182,30 @@ class install_shfmt(Command):
         return self.outfiles
 
 
+# orig_bdist_wheel is imported unconditionally at the top of this file: the
+# build-system requires setuptools>=70.1, which ships bdist_wheel as a built-in
+# command. Guarding that import would silently skip the overrides below and
+# produce a pure-python wheel that ships the binary under a py3-none-any tag;
+# failing loudly on a missing import is the safer trade.
+class bdist_wheel(orig_bdist_wheel):
+    def finalize_options(self):
+        orig_bdist_wheel.finalize_options(self)
+        # Mark us as not a pure python package
+        self.root_is_pure = False
+
+    def get_tag(self):
+        _, _, plat = orig_bdist_wheel.get_tag(self)
+        # We don't contain any python source, nor any python extensions
+        return "py2.py3", "none", plat
+
+
 command_overrides = {
     "install": install,
     "install_shfmt": install_shfmt,
     "build": build,
     "fetch_binaries": fetch_binaries,
+    "bdist_wheel": bdist_wheel,
 }
-
-
-try:
-    # setuptools >= 70.1 ships bdist_wheel directly; prefer it to avoid the
-    # FutureWarning emitted by the standalone 'wheel' package.
-    from setuptools.command.bdist_wheel import bdist_wheel as orig_bdist_wheel
-except ImportError:
-    try:
-        from wheel.bdist_wheel import bdist_wheel as orig_bdist_wheel
-    except ImportError:
-        orig_bdist_wheel = None
-
-if orig_bdist_wheel is not None:
-
-    class bdist_wheel(orig_bdist_wheel):
-        def finalize_options(self):
-            orig_bdist_wheel.finalize_options(self)
-            # Mark us as not a pure python package
-            self.root_is_pure = False
-
-        def get_tag(self):
-            _, _, plat = orig_bdist_wheel.get_tag(self)
-            # We don't contain any python source, nor any python extensions
-            return "py2.py3", "none", plat
-
-    command_overrides["bdist_wheel"] = bdist_wheel
 
 if __name__ == "__main__":
     setup(cmdclass=command_overrides)
