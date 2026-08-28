@@ -1,9 +1,19 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
+    "config:recommended",
+    "github>aquaproj/aqua-renovate-config:file#2.13.0(\\.vibepod/overlay/aqua\\.yaml)"
   ],
   "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^\\.vibepod/overlay/Dockerfile$/"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\nARG \\w+=(?<currentValue>\\S+)"
+      ]
+    },
     {
       "customType": "regex",
       "managerFilePatterns": [

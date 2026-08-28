@@ -1,0 +1,29 @@
+{
+  "checksums": [
+    {
+      "id": "github_release/github.com/astral-sh/uv/0.12.7/uv-aarch64-unknown-linux-musl.tar.gz",
+      "checksum": "6DCF60E3C085DE88ACE3671B949CA99F0652BE561FF5627F0D21394140F041DB",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/astral-sh/uv/0.12.7/uv-x86_64-unknown-linux-musl.tar.gz",
+      "checksum": "3D64D44ED67DA7908DC7F5C4D64EBB44BAD326FA17F8A0A52FC9A7793017BBE1",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/cli/cli/v2.98.0/gh_2.98.0_linux_amd64.tar.gz",
+      "checksum": "3B8AC6B30336802FC1A858D7C084E11CDF24AC1A761CA90B68022D7D729208DE",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/cli/cli/v2.98.0/gh_2.98.0_linux_arm64.tar.gz",
+      "checksum": "CF689084F3A3618F7EAE4A2420D335D74626D65F5E594B9828D125D69F800D86",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "registries/github_content/github.com/aquaproj/aqua-registry/v4.556.0/registry.yaml",
+      "checksum": "38D433AD50D8CC48A1B6200BDA9C46DE488F8E790803973F8DE1D066385DB080",
+      "algorithm": "sha256"
+    }
+  ]
+}
