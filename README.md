@@ -44,7 +44,7 @@ Add to `.pre-commit-config.yaml`:
 
 ```yaml
 - repo: https://github.com/MaxWinterstein/shfmt-py
-  rev: v4.0.0
+  rev: v4.1.0
   hooks:
     - id: shfmt
 ```
@@ -63,7 +63,7 @@ while your files stay unformatted. So re-add it:
 
 ```yaml
 - repo: https://github.com/MaxWinterstein/shfmt-py
-  rev: v4.0.0
+  rev: v4.1.0
   hooks:
     - id: shfmt
       args: [-w, -i, "2", -ci, -bn] # -w must be re-added
