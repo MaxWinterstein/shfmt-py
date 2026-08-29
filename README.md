@@ -53,8 +53,7 @@ Add to `.pre-commit-config.yaml`:
 the newest tag; `pre-commit run --all-files` formats the whole repository.
 
 The hook runs on every file [identify] tags as `shell`, excluding `csh` and `tcsh`. It defaults to
-`args: [-w]`, which rewrites files in place, and is marked `require_serial: true`, so pre-commit
-runs one `shfmt` process at a time instead of sharding files across workers.
+`args: [-w]`, which rewrites files in place.
 
 ### Overriding args
 
