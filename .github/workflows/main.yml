@@ -25,3 +25,70 @@ jobs:
       - run: pytest tests/
       - run: shfmt --version
       - run: shfmt --help
+
+  # Nothing else executes .pre-commit-hooks.yaml: the job above tests the
+  # binary, not the hook definition, so a broken entry/types/args would ship
+  # unnoticed. Run the hook the way a user gets it — pre-commit builds it from
+  # source and fetches the binary — over enough files that pre-commit shards
+  # them across workers, which is what makes running without require_serial
+  # meaningful. Windows is included because it resolves shfmt.exe instead.
+  hook:
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.x'
+      - run: python -m pip install pre-commit
+      - name: Run the hook against a sandbox repo
+        run: |
+          set -euo pipefail
+          repo="$PWD"
+          # Put the sandbox next to the checkout rather than in $TMPDIR. On
+          # Windows runners the workspace is on D: while mktemp lands on C:,
+          # and try-repo computes a relative path between the two, which fails
+          # with "ValueError: path is on mount 'D:', start on mount 'C:'".
+          sandbox="$repo/../hook-sandbox"
+          rm -rf "$sandbox"
+          mkdir -p "$sandbox"
+          cd "$sandbox"
+          git init -q .
+          git config user.email ci@example.com
+          git config user.name ci
+          python - <<'PY'
+          import pathlib
+          for i in range(60):
+              pathlib.Path(f"s{i:02d}.sh").write_text('#!/bin/sh\nif [ -n "$1" ]; then\necho "hi $1"\nfi\n')
+          PY
+          git add -A
+          git commit -qm fixtures
+
+          # First run must FAIL: the hook rewrites unformatted files.
+          if pre-commit try-repo "$repo" shfmt --all-files; then
+            echo "::error::hook reported success on unformatted files - it never ran, or -w was dropped"
+            exit 1
+          fi
+
+          # Every file must be formatted, not just whichever shard ran first.
+          tab_echo="$(printf '\techo')"
+          for f in s*.sh; do
+            if ! grep -q "$tab_echo" "$f"; then
+              echo "::error::$f was not formatted by the hook"
+              cat "$f"
+              exit 1
+            fi
+          done
+
+          # Second run must PASS: formatting is idempotent.
+          git add -A
+          git commit -qm formatted
+          pre-commit try-repo "$repo" shfmt --all-files
