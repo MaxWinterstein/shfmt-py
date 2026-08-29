@@ -4,7 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "shfmt-py"
-description = "Python wrapper around invoking shfmt (https://github.com/mvdan/sh)"
+# This is the one line PyPI search results and `pip index` show, so it leads
+# with what you get rather than how it is built. Deliberately does not say
+# "wrapper around invoking shfmt" — there is nothing to import or call.
+description = "Installs the shfmt shell script formatter binary, plus a ready-made pre-commit hook"
 readme = "README.md"
 # The authored code is MIT. Every wheel also contains upstream's shfmt
 # binary, which is BSD-3-Clause, so the distribution as a whole is both —
@@ -18,7 +21,13 @@ authors = [
     {name = "Max Winterstein", email = "github@winterstein.io"},
 ]
 requires-python = ">=3.9"
+# What someone actually types into PyPI search when looking for this.
+keywords = ["shfmt", "shell", "bash", "formatter", "pre-commit", "pre-commit-hook"]
 classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Environment :: Console",
+    "Topic :: Software Development :: Quality Assurance",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
     # Every version allowed by requires-python. The distribution ships no
@@ -44,7 +53,13 @@ dynamic = ["version"]
 test = ["pytest>=7", "setuptools>=70.1"]
 
 [project.urls]
-Homepage = "https://github.com/maxwinterstein/shfmt-py"
+# These become the PyPI sidebar. With only Homepage there was no route from
+# the project page to the issue tracker or to what a release actually bundles.
+# No Source row on purpose — it would just repeat Homepage.
+Homepage = "https://github.com/MaxWinterstein/shfmt-py"
+Issues = "https://github.com/MaxWinterstein/shfmt-py/issues"
+Changelog = "https://github.com/MaxWinterstein/shfmt-py/releases"
+"Upstream (mvdan/sh)" = "https://github.com/mvdan/sh"
 
 [tool.setuptools_scm]
 # Strip any local version segment so PyPI accepts the version.
