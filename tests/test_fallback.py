@@ -8,26 +8,12 @@ real setup() call from running during these tests.
 
 from __future__ import annotations
 
-import importlib.util
 import sys
-import types
 from pathlib import Path
 
 import pytest
 
 SETUP_PY = Path(__file__).parent.parent / "setup.py"
-
-
-def _load_setup_module() -> types.ModuleType:
-    spec = importlib.util.spec_from_file_location("setup_under_test", SETUP_PY)
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    return mod
-
-
-@pytest.fixture
-def setup_mod() -> types.ModuleType:
-    return _load_setup_module()
 
 
 def _exe_basename() -> str:

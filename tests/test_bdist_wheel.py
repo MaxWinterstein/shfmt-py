@@ -10,26 +10,12 @@ See tests/test_fallback.py for why setup.py is loaded via importlib.
 
 from __future__ import annotations
 
-import importlib.util
-import types
 from pathlib import Path
 
 import pytest
 from setuptools.dist import Distribution
 
 SETUP_PY = Path(__file__).parent.parent / "setup.py"
-
-
-def _load_setup_module() -> types.ModuleType:
-    spec = importlib.util.spec_from_file_location("setup_under_test", SETUP_PY)
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    return mod
-
-
-@pytest.fixture
-def setup_mod() -> types.ModuleType:
-    return _load_setup_module()
 
 
 @pytest.fixture
