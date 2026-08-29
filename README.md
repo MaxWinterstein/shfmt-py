@@ -9,9 +9,10 @@
 `pip install shfmt-py` puts [shfmt], the shell script formatter, on the `PATH` of your Python
 environment and gives you a ready-made [pre-commit] hook.
 
-This is packaging only. The binary is upstream's, unmodified — bundled inside the wheel on common
-platforms, downloaded and checksum-verified at build time otherwise ("How the binary gets installed"
-below has the details). There is no Python API: nothing to `import`, no `python -m shfmt`. For what
+This is packaging only — no patches, no Python API, nothing to `import`, no `python -m shfmt`. On
+common platforms the wheel bundles upstream's binary; elsewhere the build downloads and
+checksum-verifies it, or — where no build is pinned for your platform — copies an existing `shfmt`
+from your `PATH` unverified ("How the binary gets installed" below has the details). For what
 `shfmt` does and which flags it takes, run `shfmt --help` or read the [upstream docs][shfmt].
 
 Modeled after [shellcheck-py], adapted for `shfmt`.
@@ -73,7 +74,7 @@ Those flags — two-space indent, indented `case` arms, binary operators allowed
 are the set the upstream manual describes as closely resembling Google's shell style. Quote the `2`:
 pre-commit expects every argument to be a string, and YAML would otherwise make it an integer.
 
-For a check-only run that reports instead of rewriting, use these `args` in the same `hooks:` list:
+For a check-only run that reports instead of rewriting, swap the `args` above for:
 
 ```yaml
     - id: shfmt
@@ -143,7 +144,8 @@ source and still reaches for GitHub, so an air-gapped runner additionally needs 
 ## Versioning
 
 Which `shfmt` do you have? Ask the binary — `shfmt --version` is always right. Before installing,
-read `SHFMT_VERSION` in [setup.py] at the tag you are interested in.
+read `SHFMT_VERSION` in `setup.py` at that release's tag —
+`https://github.com/MaxWinterstein/shfmt-py/blob/vX.Y.Z/setup.py`.
 
 `shfmt-py` is independently versioned; the PyPI version does **not** mirror the bundled `shfmt`
 version.
