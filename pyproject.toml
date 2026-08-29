@@ -15,8 +15,10 @@ readme = "README.md"
 license = "MIT AND BSD-3-Clause"
 # LICENSE-shfmt is upstream's BSD-3-Clause text. We redistribute the shfmt
 # binary unmodified, and clause 2 requires that notice to travel with binary
-# distributions — which every wheel here is.
-license-files = ["LICENSE", "LICENSE-shfmt"]
+# distributions — which every wheel here is. NOTICE holds the shellcheck-py
+# attribution that used to sit under a rule at the bottom of LICENSE; it was
+# split out so GitHub detects LICENSE as plain MIT instead of "Other".
+license-files = ["LICENSE", "LICENSE-shfmt", "NOTICE"]
 authors = [
     {name = "Max Winterstein", email = "github@winterstein.io"},
 ]
