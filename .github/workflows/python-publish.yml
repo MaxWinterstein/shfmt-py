@@ -40,6 +40,18 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
         with:
           python-version: "3.x"
+      - name: Point the README's pre-commit rev at this release
+        # README.md is the PyPI long_description and carries the `rev:` users
+        # copy. sync_readme_to_release.yml only rewrites it *after* the release
+        # is published, so the tag these artifacts are built from still names
+        # the previous release: 4.0.0 shipped `rev: v3.13.0.3` and 3.13.0.3
+        # shipped `rev: v3.13.0.1`. Rewrite it in the build tree, never
+        # committed, so each artifact advertises itself.
+        if: github.event_name == 'release'
+        shell: bash
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: .github/scripts/stamp-readme-rev.sh
       - run: python -m pip install build
       - name: Build wheel
         env:
@@ -65,6 +77,13 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
         with:
           python-version: "3.x"
+      - name: Point the README's pre-commit rev at this release
+        # Same reasoning as in build-wheels above.
+        if: github.event_name == 'release'
+        shell: bash
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: .github/scripts/stamp-readme-rev.sh
       - run: python -m pip install build
       - run: python -m build --sdist
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
@@ -171,6 +190,32 @@ jobs:
         run: |
           python -m pip install twine
           twine check dist/*
+      - name: Check every artifact carries the release version
+        # setuptools-scm derives the version from git state, so a dirty or
+        # detached tree silently yields something like 4.0.1.dev0 instead of
+        # 4.0.0 — and that is what would get published. Assert the filenames
+        # against the tag rather than trusting the derivation.
+        if: github.event_name == 'release'
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          expected="${TAG#v}"
+          shopt -s nullglob
+          artifacts=(dist/*)
+          if [ "${#artifacts[@]}" -eq 0 ]; then
+            echo "::error::no artifacts to check"
+            exit 1
+          fi
+          for f in "${artifacts[@]}"; do
+            name="$(basename "$f")"
+            case "$name" in
+              "shfmt_py-$expected-"*.whl | "shfmt_py-$expected.tar.gz")
+                echo "ok: $name" ;;
+              *)
+                echo "::error::$name does not carry version $expected"
+                exit 1 ;;
+            esac
+          done
       - name: Install from the sdist and run it
         # Naming the tarball explicitly makes pip build it from source, which
         # is the path a user without a matching wheel would hit.
