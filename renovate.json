@@ -5,6 +5,9 @@
     "helpers:pinGitHubActionDigests",
     "github>aquaproj/aqua-renovate-config:file#2.13.0(\\.vibepod/overlay/aqua\\.yaml)"
   ],
+  "gitIgnoredAuthors": [
+    "41898282+github-actions[bot]@users.noreply.github.com"
+  ],
   "customManagers": [
     {
       "customType": "regex",
