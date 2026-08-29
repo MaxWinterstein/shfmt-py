@@ -93,26 +93,34 @@ print("[INFO] Updating setup.py with new checksums...")
 
 new_content = content
 updated = False
+unmatched = []
 
 # Directly update variables in setup.py with the new checksums
 for var_name, sha in checksums.items():
-    print(f"[DEBUG] var_name: {var_name}")
-    # Match either quote style (legacy single-quoted or current double-quoted).
-    pattern = rf"""({var_name}\s*=\s*)["'][a-fA-F0-9]{{64}}["']"""
-    replacement = rf'\1"{sha}"'  # Always emit double quotes (codebase convention).
+    # Anchored at the start of a line so a short name cannot match the tail of
+    # a longer identifier. Matches either quote style (legacy single-quoted or
+    # current double-quoted) and always emits double quotes.
+    pattern = rf"""(^{re.escape(var_name)}\s*=\s*)["'][a-fA-F0-9]{{64}}["']"""
+    new_content, count = re.subn(pattern, rf'\1"{sha}"', new_content, flags=re.MULTILINE)
 
-    # Debug: print the pattern we are searching for
-    print(f"[DEBUG] Searching for pattern: {pattern}")
-
-    if re.search(pattern, new_content):
-        new_content = re.sub(pattern, replacement, new_content)
+    if count:
         print(f"[INFO] Updated checksum for {var_name}: {sha}")
         updated = True
     else:
-        print(f"[WARNING] Could not find pattern for {var_name}. Check your setup.py format.")
+        unmatched.append(var_name)
+
+# Every other failure in this script exits non-zero; this one used to warn and
+# carry on. Because `updated` goes True as soon as any *other* variable matches,
+# a single missed substitution wrote the file, got committed by
+# git-auto-commit-action and exited 0 — shipping a stale hash for that platform
+# with nothing in the run marked red.
+if unmatched:
+    print(f"[ERROR] No assignment found in {SHFMT_VERSION_FILE} for: {sorted(unmatched)}")
+    print("[ERROR] Refusing to write a partial update: those platforms would keep stale hashes.")
+    sys.exit(1)
 
 if not updated:
-    print("[WARNING] No checksums were updated. Maybe they are already correct?")
+    print("[INFO] No checksums needed updating; they already match.")
 else:
     with open(SHFMT_VERSION_FILE, "w") as f:
         f.write(new_content)
