@@ -30,7 +30,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           token: ${{ secrets.PAT }}
           ref: ${{ github.head_ref }}
@@ -49,7 +49,7 @@ jobs:
           echo "version=${version}" >> "$GITHUB_OUTPUT"
 
       - name: Install aqua
-        uses: aquaproj/aqua-installer@v4.0.5
+        uses: aquaproj/aqua-installer@96a9bc20066c5bf5e275b41019cfc165b25f4e2e  # v4.0.5
         with:
           aqua_version: ${{ steps.aqua.outputs.version }}
           # No aqua.yaml at the repo root; this job only regenerates hashes.
@@ -74,5 +74,5 @@ jobs:
           sha="$(curl -sSfL "https://raw.githubusercontent.com/aquaproj/aqua-installer/${version}/aqua-installer" | sha256sum | cut -d' ' -f1)"
           sed -i "s|^ARG AQUA_INSTALLER_SHA256=.*|ARG AQUA_INSTALLER_SHA256=${sha}|" Dockerfile
 
-      - uses: stefanzweifel/git-auto-commit-action@v7
+      - uses: stefanzweifel/git-auto-commit-action@4a55954c782fc1ea30b9056cd3e7a2b40ca8887d  # v7.2.0
         if: ${{ env.commit_message != 'Apply automatic changes' }}

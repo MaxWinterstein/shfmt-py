@@ -12,7 +12,7 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           ref: master
 
@@ -23,7 +23,7 @@ jobs:
           sed -i -E "s|(rev:[[:space:]]+)v?[0-9]+(\.[0-9]+)+|\\1${TAG}|" README.md
           git --no-pager diff -- README.md
 
-      - uses: peter-evans/create-pull-request@v8
+      - uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1  # v8.1.1
         with:
           # Uses the default GITHUB_TOKEN (job permissions above grant
           # contents:write and pull-requests:write). The auto-opened PR
