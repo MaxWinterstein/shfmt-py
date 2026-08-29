@@ -76,3 +76,12 @@ jobs:
 
       - uses: stefanzweifel/git-auto-commit-action@4a55954c782fc1ea30b9056cd3e7a2b40ca8887d  # v7.2.0
         if: ${{ env.commit_message != 'Apply automatic changes' }}
+        with:
+          # Renovate reads the author *and* the committer of every commit on
+          # its branch, and stops rebasing the PR as soon as it sees an email
+          # it doesn't know. The action would otherwise take the author from
+          # github.actor and the committer from its own default, so pin both
+          # to the one identity listed in renovate.json's gitIgnoredAuthors.
+          commit_author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          commit_user_name: github-actions[bot]
+          commit_user_email: 41898282+github-actions[bot]@users.noreply.github.com
