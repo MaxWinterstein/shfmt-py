@@ -6,8 +6,14 @@ build-backend = "setuptools.build_meta"
 name = "shfmt-py"
 description = "Python wrapper around invoking shfmt (https://github.com/mvdan/sh)"
 readme = "README.md"
-license = "MIT"
-license-files = ["LICENSE"]
+# The authored code is MIT. Every wheel also contains upstream's shfmt
+# binary, which is BSD-3-Clause, so the distribution as a whole is both —
+# spelled out here so license scanners see the bundled terms, not just ours.
+license = "MIT AND BSD-3-Clause"
+# LICENSE-shfmt is upstream's BSD-3-Clause text. We redistribute the shfmt
+# binary unmodified, and clause 2 requires that notice to travel with binary
+# distributions — which every wheel here is.
+license-files = ["LICENSE", "LICENSE-shfmt"]
 authors = [
     {name = "Max Winterstein", email = "github@winterstein.io"},
 ]
