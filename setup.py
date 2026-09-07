@@ -16,15 +16,15 @@ from setuptools.command.bdist_wheel import bdist_wheel as orig_bdist_wheel
 from setuptools.command.build import build as orig_build
 from setuptools.command.install import install as orig_install
 
-linux_arm = "951f136dae5f11cfb23b7a0140a16739f53289f7d933690eed3ccf73d011b175"
-linux_arm64 = "8029959a945b5c6f2bc92ce53fca5cf0384c811cc0884b25b196a093a005657a"
-linux_amd64 = "fe42021c7272ef2d67ea36cbc3031683c625d0badec733ef3a57b567246a0b66"
-darwin_amd64 = "74255a8087d74a79f5c1307db807e7efa8f062c429e3a05c075550392e0dcfa1"
-darwin_arm64 = "4710ba8074a74334069719d5b82f8cb97532e5623bfe43ef7cdb3442101b9cb2"
-windows_amd64_exe = "6738a3e155fbfec3bedc70962f9cd1610197587a43b5d7100f405239d8e11375"
-windows_386_exe = "899d0944bb7d81564a72c0ad77acc2a1d56d5292f0535317e98b2361eba6aab3"
+linux_arm = "ede6c4adefeda196d963906daa7c1f20094e6def7a98bcb9f4c74079babf1eca"
+linux_arm64 = "5f2db09dae91fca848f7adbdd014632e921a383863a2ad7e0450ad3aba0c6489"
+linux_amd64 = "76e77641faa025814b77f153b29796b8e6fa2fca03e0c76a691608b86c7ea7bf"
+darwin_amd64 = "d33eee0da0f92835b3562e9767a05cee7e4eaeef47daa03bfd09da17b4b590a6"
+darwin_arm64 = "b7c872db63553ccffc7253aba3ed7d4885a27d83f1ba567b1138c6315a5847e5"
+windows_amd64_exe = "13629ce28442ca80b6b5a819f7574ab39e1c28c6e26734ca816c9714e04851df"
+windows_386_exe = "b6f171113e7359f44d5ffdc93a90b93a7d405aa8847129a6982e10fe4d356f1e"
 
-SHFMT_VERSION = "3.14.0"
+SHFMT_VERSION = "3.14.1"
 POSTFIX_SHA256 = {
     ("linux", "armv6hf"): (
         "linux_arm",
