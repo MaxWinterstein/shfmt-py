@@ -175,9 +175,8 @@ you which one you got.
 **It won't get updated via e.g. `Renovate Bot`.**
 
 Releases `v4.0.0` and onwards use standard semver — no special Renovate config needed. For older
-`3.x.y.z` releases you'll need `"versioning": "pep440"` (or see
-[shfmt-py/update-via-renovate][renovate-example]). For the pre-commit hook, `pre-commit autoupdate`
-works either way.
+`3.x.y.z` releases you'll need `"versioning": "pep440"`. For the pre-commit hook,
+`pre-commit autoupdate` works either way.
 
 **I get something like `SSL: CERTIFICATE_VERIFY_FAILED` on macOS.**
 
@@ -208,6 +207,5 @@ the [mvdan/sh][shfmt] project and is redistributed unmodified under its own
 [shfmt-py-issues]: https://github.com/MaxWinterstein/shfmt-py/issues
 [LICENSE]: https://github.com/MaxWinterstein/shfmt-py/blob/master/LICENSE
 [shfmt-license]: https://github.com/mvdan/sh/blob/master/LICENSE
-[renovate-example]: https://github.com/shfmt-py/update-via-renovate
 [here1]: https://github.com/albertogeniola/MerossIot/issues/62#issuecomment-535769621
 [here2]: https://stackoverflow.com/questions/27835619/urllib-and-ssl-certificate-verify-failed-error
