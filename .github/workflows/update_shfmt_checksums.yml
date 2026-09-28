@@ -1,12 +1,13 @@
 name: Update shfmt checksums
 
+# No `paths` filter: this job is a required check and has to report on every
+# PR (see update_aqua_checksums.yml).
 on:
   pull_request:
     branches: [master]
-    paths: [setup.py]
 
 jobs:
-  update-checksums:
+  update-shfmt-checksums:
     # Only on Renovate's mvdan/sh bumps; skips manual or fork PRs.
     if: startsWith(github.head_ref, 'renovate/mvdan-sh')
     runs-on: ubuntu-latest

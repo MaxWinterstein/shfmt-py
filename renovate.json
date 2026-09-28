@@ -5,6 +5,29 @@
     "helpers:pinGitHubActionDigests",
     "github>aquaproj/aqua-renovate-config:file#2.13.0(\\.vibepod/overlay/aqua\\.yaml)"
   ],
+  "minimumReleaseAge": "3 days",
+  "pre-commit": {
+    "enabled": true
+  },
+  "packageRules": [
+    {
+      "description": "Non-major updates are only dev tooling, CI actions and pre-commit hooks; CI covers them, so merge once every required check is green.",
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
+      "automerge": true
+    },
+    {
+      "description": "mvdan/sh is the shfmt binary this package ships to users; keep a human in the loop.",
+      "matchDepNames": [
+        "mvdan/sh"
+      ],
+      "automerge": false
+    }
+  ],
   "gitIgnoredAuthors": [
     "41898282+github-actions[bot]@users.noreply.github.com"
   ],
