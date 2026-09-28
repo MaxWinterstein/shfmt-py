@@ -20,6 +20,10 @@ on:
 
 jobs:
   update-aqua-checksums:
+    env:
+      # Also the loop guard below: the job reruns on its own pushed commit
+      # and must not try to commit again.
+      COMMIT_MESSAGE: Update aqua checksums
     # Only on Renovate's bumps; skips manual or fork PRs.
     if: startsWith(github.head_ref, 'renovate/')
     runs-on: ubuntu-latest
@@ -38,7 +42,7 @@ jobs:
 
       - name: Get last commit message
         # %s = subject line only; %B (full body) breaks $GITHUB_ENV on multi-line messages.
-        run: echo "commit_message=$(git log -1 --pretty=%s)" >> "$GITHUB_ENV"
+        run: echo "last_commit_message=$(git log -1 --pretty=%s)" >> "$GITHUB_ENV"
 
       - name: Read pinned aqua version
         id: aqua
@@ -76,8 +80,9 @@ jobs:
           sed -i "s|^ARG AQUA_INSTALLER_SHA256=.*|ARG AQUA_INSTALLER_SHA256=${sha}|" Dockerfile
 
       - uses: stefanzweifel/git-auto-commit-action@4a55954c782fc1ea30b9056cd3e7a2b40ca8887d  # v7.2.0
-        if: ${{ env.commit_message != 'Apply automatic changes' }}
+        if: ${{ env.last_commit_message != env.COMMIT_MESSAGE }}
         with:
+          commit_message: ${{ env.COMMIT_MESSAGE }}
           # Renovate reads the author *and* the committer of every commit on
           # its branch, and stops rebasing the PR as soon as it sees an email
           # it doesn't know. The action would otherwise take the author from
