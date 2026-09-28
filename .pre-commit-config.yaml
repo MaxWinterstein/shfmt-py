@@ -15,3 +15,8 @@ repos:
     -   id: ruff-check
         args: [--fix]
     -   id: ruff-format
+
+ci:
+  # Renovate bumps the hook revs (and automerges them); pre-commit.ci has no
+  # "never" option, so keep its own autoupdate as rare as it gets.
+  autoupdate_schedule: quarterly

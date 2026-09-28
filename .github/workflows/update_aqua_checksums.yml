@@ -10,15 +10,16 @@ name: Update aqua checksums
 # release from changing under us later; they are not a review of the new
 # release.
 
+# No `paths` filter: this job is a required check, so it has to report on
+# every PR. Branch protection counts the skip on non-Renovate PRs as a pass,
+# and on Renovate PRs the job is still running when it pushes the hashes, so
+# auto-merge can never fire on the unhashed commit.
 on:
   pull_request:
     branches: [master]
-    paths:
-      - .vibepod/overlay/aqua.yaml
-      - .vibepod/overlay/Dockerfile
 
 jobs:
-  update-checksums:
+  update-aqua-checksums:
     # Only on Renovate's bumps; skips manual or fork PRs.
     if: startsWith(github.head_ref, 'renovate/')
     runs-on: ubuntu-latest
