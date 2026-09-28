@@ -33,12 +33,18 @@ jobs:
   # them across workers, which is what makes running without require_serial
   # meaningful. Windows is included because it resolves shfmt.exe instead.
   hook:
+    # The pre-commit legs keep their original check names, which branch
+    # protection requires by name.
+    name: hook (${{ matrix.os }}${{ matrix.tool != 'pre-commit' && format(', {0}', matrix.tool) || '' }})
     permissions:
       contents: read
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
+        # prek reads the same .pre-commit-hooks.yaml; make sure it runs the
+        # hook the same way.
+        tool: [pre-commit, prek]
     runs-on: ${{ matrix.os }}
     defaults:
       run:
@@ -48,7 +54,7 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
         with:
           python-version: '3.x'
-      - run: python -m pip install pre-commit
+      - run: python -m pip install ${{ matrix.tool }}
       - name: Run the hook against a sandbox repo
         run: |
           set -euo pipefail
@@ -73,7 +79,7 @@ jobs:
           git commit -qm fixtures
 
           # First run must FAIL: the hook rewrites unformatted files.
-          if pre-commit try-repo "$repo" shfmt --all-files; then
+          if ${{ matrix.tool }} try-repo "$repo" shfmt --all-files; then
             echo "::error::hook reported success on unformatted files - it never ran, or -w was dropped"
             exit 1
           fi
@@ -91,4 +97,4 @@ jobs:
           # Second run must PASS: formatting is idempotent.
           git add -A
           git commit -qm formatted
-          pre-commit try-repo "$repo" shfmt --all-files
+          ${{ matrix.tool }} try-repo "$repo" shfmt --all-files

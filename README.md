@@ -52,6 +52,9 @@ Add to `.pre-commit-config.yaml`:
 `rev` is the `shfmt-py` release tag, not the `shfmt` version. `pre-commit autoupdate` moves it to
 the newest tag; `pre-commit run --all-files` formats the whole repository.
 
+[prek] runs the same hook, from `.pre-commit-config.yaml` or its own `prek.toml`; CI tests both
+tools. There the commands are `prek update` and `prek run --all-files`.
+
 The hook runs on every file [identify] tags as `shell`, excluding `csh` and `tcsh`. It defaults to
 `args: [-w]`, which rewrites files in place.
 
@@ -93,8 +96,8 @@ For a check-only run that reports instead of rewriting, swap the `args` above fo
 
 ### Hook installs need network access
 
-pre-commit installs `language: python` hooks by running `pip install .` inside its own clone, so it
-never uses the published wheels. Installing the hook therefore downloads the binary from the
+pre-commit (and prek) installs `language: python` hooks by running `pip install .` inside its own
+clone, so it never uses the published wheels. Installing the hook therefore downloads the binary from the
 `mvdan/sh` GitHub release the first time a given `rev` is used, and caches the result afterwards.
 Restricted runners need `github.com` **and** its release-asset host (`*.githubusercontent.com`)
 reachable — a PyPI mirror is not enough.
@@ -138,7 +141,7 @@ For air-gapped environments, build one wheel per target platform on a machine th
 release workflow does, or the wheel comes out tagged `linux_x86_64`) and serve them from your
 internal index. That covers `pip` / `uv` / `pipx` installs only: pre-commit builds the hook from
 source and still reaches for GitHub, so an air-gapped runner additionally needs a mirror of the
-`mvdan/sh` release asset or a pre-populated `~/.cache/pre-commit`.
+`mvdan/sh` release asset or a pre-populated `~/.cache/pre-commit` (`~/.cache/prek` for prek).
 
 ## Versioning
 
@@ -176,7 +179,10 @@ you which one you got.
 
 Releases `v4.0.0` and onwards use standard semver — no special Renovate config needed. For older
 `3.x.y.z` releases you'll need `"versioning": "pep440"`. For the pre-commit hook,
-`pre-commit autoupdate` works either way.
+`pre-commit autoupdate` (or `prek update`) works either way.
+
+Renovate's `pre-commit` manager only reads `.pre-commit-config.yaml`, not `prek.toml`, so a hook
+`rev` in `prek.toml` has to be moved with `prek update`.
 
 **I get something like `SSL: CERTIFICATE_VERIFY_FAILED` on macOS.**
 
@@ -201,6 +207,7 @@ the [mvdan/sh][shfmt] project and is redistributed unmodified under its own
 [manual]: https://github.com/mvdan/sh/blob/master/cmd/shfmt/shfmt.1.scd
 [sh-issues]: https://github.com/mvdan/sh/issues
 [pre-commit]: https://pre-commit.com
+[prek]: https://github.com/j178/prek
 [identify]: https://github.com/pre-commit/identify
 [shellcheck-py]: https://github.com/shellcheck-py/shellcheck-py
 [setup.py]: https://github.com/MaxWinterstein/shfmt-py/blob/master/setup.py
