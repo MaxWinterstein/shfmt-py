@@ -25,4 +25,4 @@ packages:
   - name: cli/cli@v2.102.0
   # uv — the Python package/venv manager used inside the pod. The repo's own
   # CI builds with pip.
-  - name: astral-sh/uv@0.12.21
+  - name: astral-sh/uv@0.12.22
