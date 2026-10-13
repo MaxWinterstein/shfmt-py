@@ -1,13 +1,13 @@
 {
   "checksums": [
     {
-      "id": "github_release/github.com/astral-sh/uv/0.12.24/uv-aarch64-unknown-linux-musl.tar.gz",
-      "checksum": "7F9AB4726D743B6A92E310477A7840C8A8A7B3938CB3C4657D541342FCA75011",
+      "id": "github_release/github.com/astral-sh/uv/0.13.0/uv-aarch64-unknown-linux-musl.tar.gz",
+      "checksum": "281CA6CF43F4E26E35474839AD4861BE86DE42AF2682F74134460F5B2071B96D",
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/astral-sh/uv/0.12.24/uv-x86_64-unknown-linux-musl.tar.gz",
-      "checksum": "48170BD200A5430298C18F3B264485A1F3A8605F01088277DAF6E37633EDF0F5",
+      "id": "github_release/github.com/astral-sh/uv/0.13.0/uv-x86_64-unknown-linux-musl.tar.gz",
+      "checksum": "B0828FC4CDC47D65951E94B5F0A15A5364420E8DCD88723F3B21E7A2EB30BBC3",
       "algorithm": "sha256"
     },
     {
