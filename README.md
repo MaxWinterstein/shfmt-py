@@ -32,7 +32,7 @@ pipx install shfmt-py
 ```
 
 Requires Python 3.9 or newer; the binary itself has no Python runtime dependency. CI covers
-CPython 3.9, 3.13 and 3.14 on Linux, macOS (arm64 and x86_64) and Windows.
+CPython 3.9, 3.13, 3.14 and 3.15 on Linux, macOS (arm64 and x86_64) and Windows.
 
 The distribution installs exactly one executable — `shfmt`, or `shfmt.exe` on Windows — into the
 environment's scripts directory, so it is on `PATH` whenever that environment is active.
