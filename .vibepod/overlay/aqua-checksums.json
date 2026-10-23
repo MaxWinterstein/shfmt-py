@@ -11,13 +11,13 @@
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/cli/cli/v2.102.0/gh_2.102.0_linux_amd64.tar.gz",
-      "checksum": "BB766F710EEF8EDE859C18578C72C327597CD4C8A85B06001B1F3843C6019386",
+      "id": "github_release/github.com/cli/cli/v2.102.1/gh_2.102.1_linux_amd64.tar.gz",
+      "checksum": "77B9E297E94C50336823D0F84DE7EF1BE60CBA704601FA0D98F129F47A94987B",
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/cli/cli/v2.102.0/gh_2.102.0_linux_arm64.tar.gz",
-      "checksum": "7862C86C72F43DF3A2D93DDDE6F473285B4E2AF61B494849846827E513EF6484",
+      "id": "github_release/github.com/cli/cli/v2.102.1/gh_2.102.1_linux_arm64.tar.gz",
+      "checksum": "5019B3CC6E8A03BB4D88600F8DBDA2ADD8E6407705C159B0C63151036E77A1AF",
       "algorithm": "sha256"
     },
     {
