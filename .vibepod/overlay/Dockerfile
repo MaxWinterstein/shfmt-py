@@ -27,7 +27,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # update_aqua_checksums.yml refreshes AQUA_INSTALLER_SHA256 to match on
 # those PRs, since Renovate cannot compute it itself.
 # renovate: datasource=github-releases depName=aquaproj/aqua-installer
-ARG AQUA_INSTALLER_VERSION=v4.1.0
+ARG AQUA_INSTALLER_VERSION=v4.1.1
 ARG AQUA_INSTALLER_SHA256=4d3e513d42f425609c1ead6ecd40b9c62492011979dfe23d7012428a59efbe82
 # renovate: datasource=github-releases depName=aquaproj/aqua
 ARG AQUA_VERSION=v2.65.2
