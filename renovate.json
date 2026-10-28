@@ -3,7 +3,7 @@
   "extends": [
     "config:recommended",
     "helpers:pinGitHubActionDigests",
-    "github>aquaproj/aqua-renovate-config:file#2.13.0(\\.vibepod/overlay/aqua\\.yaml)"
+    "github>aquaproj/aqua-renovate-config:file#2.14.0(\\.vibepod/overlay/aqua\\.yaml)"
   ],
   "minimumReleaseAge": "3 days",
   "pre-commit": {
