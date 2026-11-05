@@ -8,6 +8,9 @@ on:
 
 jobs:
   test:
+    # Explicit name so the extra `runner` key doesn't leak into the check
+    # names, which branch protection requires by name.
+    name: test (${{ matrix.os }}, ${{ matrix.python }})
     permissions:
       contents: read
     strategy:
@@ -15,7 +18,13 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, macos-15-intel, windows-latest]
         python: ['3.9', '3.13', '3.14', '3.15']
-    runs-on: ${{ matrix.os }}
+        # ubuntu-latest is Ubuntu 26.04, for which actions/python-versions
+        # ships no 3.9 build. Run that leg on 24.04 but keep its check name.
+        include:
+          - os: ubuntu-latest
+            python: '3.9'
+            runner: ubuntu-24.04
+    runs-on: ${{ matrix.runner || matrix.os }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
