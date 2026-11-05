@@ -4,9 +4,10 @@ on:
   release:
     types: [published]
 
+# The PR itself is opened with secrets.PAT (see below); the job token only
+# needs to read the checkout.
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
   sync:
@@ -25,11 +26,11 @@ jobs:
 
       - uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1  # v8.1.1
         with:
-          # Uses the default GITHUB_TOKEN (job permissions above grant
-          # contents:write and pull-requests:write). The auto-opened PR
-          # will not trigger downstream CI workflows — accepted trade-off
-          # for a README-rev-only change. Previously used secrets.PAT but
-          # that token lacked pull_requests:write scope.
+          # Not the default GITHUB_TOKEN: GitHub doesn't start workflows for
+          # PRs it opens, so the required checks never reported and every
+          # sync PR (#58, #76, #84, #92) needed an admin override to merge.
+          # The PAT needs Contents and Pull requests write on this repo.
+          token: ${{ secrets.PAT }}
           branch: sync-readme-to-release
           delete-branch: true
           title: "Sync README rev to ${{ github.event.release.tag_name }}"

@@ -26,10 +26,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           token: ${{ secrets.PAT }}
-          # Need history so the script can read setup.py at HEAD~1 to
-          # detect SHFMT_VERSION changes and reset PY_VERSION on bumps.
           ref: ${{ github.head_ref }}
-          fetch-depth: 2
 
       - name: Get last commit message
         id: get_commit_message
