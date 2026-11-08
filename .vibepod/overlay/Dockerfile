@@ -30,7 +30,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ARG AQUA_INSTALLER_VERSION=v4.1.1
 ARG AQUA_INSTALLER_SHA256=c0acde4802a1edd8b8201fd4cc1f0e52700cd4feb875f9c9793381b5b0ca2065
 # renovate: datasource=github-releases depName=aquaproj/aqua
-ARG AQUA_VERSION=v2.66.0
+ARG AQUA_VERSION=v2.66.1
 # ARG, not ENV: the build steps below need it, but if it persisted into the
 # image every bare `aqua` call by the non-root runtime user would try to write
 # root-owned /opt/aqua instead of ~/.local/share/aquaproj-aqua.
