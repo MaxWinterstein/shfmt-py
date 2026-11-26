@@ -28,7 +28,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # those PRs, since Renovate cannot compute it itself.
 # renovate: datasource=github-releases depName=aquaproj/aqua-installer
 ARG AQUA_INSTALLER_VERSION=v4.1.2
-ARG AQUA_INSTALLER_SHA256=c0acde4802a1edd8b8201fd4cc1f0e52700cd4feb875f9c9793381b5b0ca2065
+ARG AQUA_INSTALLER_SHA256=644692ba00e9bb45906aa39370fb1f2b972046ba6801b2ae348b7380c40e6a4b
 # renovate: datasource=github-releases depName=aquaproj/aqua
 ARG AQUA_VERSION=v2.66.1
 # ARG, not ENV: the build steps below need it, but if it persisted into the
